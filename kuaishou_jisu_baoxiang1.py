@@ -79,7 +79,6 @@ def gen_sig(params,data):
 
 def main():
     get_baoxiang(_cookie, "273770408664a7a2ea7b10787f7e62718c6a7e50b5b0f4654b2568686e6e6d6c5373")
-    get_money(_cookie)
     
 if __name__ == '__main__':
     main()
