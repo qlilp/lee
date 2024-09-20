@@ -22,7 +22,7 @@ def get_baoxiang(token):
     print('开始领取宝箱 💎💎')
     access_token = ''
     try:
-        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/treasureBox/report?__NS_sig3=bfafe8d8fdd76d6d73e393e0e7e6828ddee27d58767f6dfdf1def0f0f6f6f5f4cbeb&sigCatVer=1"
+        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/treasureBox/report?__NS_sig3=9b8bccfc7d671ac755c7bdc4c3c2c753efc95fd403d54bd94777d4d4d2d2d1d0efcf&sigCatVer=1"
 
         # 定义请求头
         headers = {
@@ -58,7 +58,7 @@ def get_fanbu(token):
     print("开始领取饭补 🍱")
     try:
         # 获取当前的是否领取过饭补
-        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/detail?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TCB8KqqVKMgRgdptyHjC4q5WxkzlivWeuOUH73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5NYynpqIeL1p8oDC_aNVs06Eqr9eEDO9WQN6bPOljEgPJOUyOx2TUE6Zol22dloUXNTFoJdgLPRKfw_RHi0y41S59Nig74-a-EOa976Kn3PySfizrwKPeBfIvE4O9ZR3FHGMRsQPwfpaekre0Ra5-vsMxO_S1KZimvzg8hzW00xtV2EkEeYPLRaBq8MgnbnxspIGrdAT7goeqm_Gr_PeS3rmTNMpgPIhHOlYIzTyVqRydZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgrL6MkureEraDmbuEH0je0NPMrtCfeKHFlC$HE_4b541fe2ab24d38e819001d42e68655f9401070200376400000011de71b732d48e8190019b563eda7b563ee200&sigCatVer=1"
+        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/detail?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuO0H73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZR3FHGMRsQPwfpaekre0Ra5-q8MxO_S1KZimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeKHFlC$HE_4b541fe2abd5ddd40f9201ad0c5d00d171010702003764000000138e25b91ae0d40f92019b563eda7b563e8900&sigCatVer=1"
         headers = {
             "Host": "encourage.kuaishou.com",
             "Connection": "keep-alive",
@@ -81,7 +81,7 @@ def get_fanbu(token):
         if resp_json['result'] == 1:
             if resp_json['data']['mainButtonInfo']['buttonStatus'] == 'TO_COMPLETE':
 
-                url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/report?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TCB8KqqVKMgRgdptyHjC4q5WxkzlivWeuJ0H73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5NYynpqIeL1p8oDC_aNVs06Eqr9eEDO9WQN6bPOljEgPJOUyOx2TUE6Zol22dloUXNTFoJdgLPRKfw_RHi0y41S59Nig74-a-EOa976Kn3PySfizrwKPeBfIvE4O9ZB3FHGMRsAPwfpaekre0Ra5-ycExO_S1JZimvzg8hzW00xtV2EkEeYPLRaBq8MgnbnxspIGrdAT7goeqm_Gr_PeS3rmTNMpgPIhHOlYIzTyVqRydZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgrL6MkureEraDmbuEH0je0NPMrtCfeGHFlC$HE_4b541fe2abe1d0e080900153dec924ff8e0107020037680000001bdd71b4d02fe18090019b563eda7b563e9900&sigCatVer=1"
+                url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/report?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuO0H73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZR3FHGMRsQPwfpaekre0Ra5-q8MxO_S1KZimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeKHFlC$HE_4b541fe2abd5ddd40f9201ad0c5d00d171010702003764000000138e25b91ae0d40f92019b563eda7b563e8900&sigCatVer=1"
 
                 # 定义请求头
                 headers = {
@@ -162,7 +162,7 @@ def get_money(token):
 def get_qiandao(token):
     print('❤开始执行签到')
     try:
-        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/signIn/report?__NS_sig3=2a3a7d4d6842f8f8e6761f757273493c0c023838eaeaf868ce516565636360615e7e&sigCatVer=1"
+        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/signIn/report?__NS_sig3=a1b1f6c6981e16fd6ffd9bfef9f8b4013acf360804ef71e37228eeeee8e8ebead5f5&sigCatVer=1"
 
         # 定义请求头
         headers = {
