@@ -81,7 +81,7 @@ def get_fanbu(token):
         if resp_json['result'] == 1:
             if resp_json['data']['mainButtonInfo']['buttonStatus'] == 'TO_COMPLETE':
 
-                url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/report?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuO0H73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZR3FHGMRsQPwfpaekre0Ra5-q8MxO_S1KZimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeKHFlC$HE_4b541fe2abd5ddd40f9201ad0c5d00d171010702003764000000138e25b91ae0d40f92019b563eda7b563e8900&sigCatVer=1"
+                url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/report?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuPEH73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZB3FHGMRsAPwfpaekre0Ra5-K8MxO_S1Kpimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeJHFlC$HE_4b541fe2abbaa5d3119201f613e030e81901070200376700000010dd75b504b7d31192019b563eda7b563ebc00&sigCatVer=1"
 
                 # 定义请求头
                 headers = {
