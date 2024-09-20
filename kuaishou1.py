@@ -58,7 +58,7 @@ def get_fanbu(token):
     print("开始领取饭补 🍱")
     try:
         # 获取当前的是否领取过饭补
-        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/detail?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuO0H73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZR3FHGMRsQPwfpaekre0Ra5-q8MxO_S1KZimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeKHFlC$HE_4b541fe2abd5ddd40f9201ad0c5d00d171010702003764000000138e25b91ae0d40f92019b563eda7b563e8900&sigCatVer=1"
+        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/detail?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuPkH73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06Eqr9eEDO9WQN6bPOljEgPJOUyOx2TUE6Zol22dloUXNTFoJdgLPRKfw_RHi0q91S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZR3FHGMRsQPwfpaekre0Ra5-ucMxO_S1KZimvzg8hzW00xtV2EkBd9SQEfFt8MgnbnxspI6ncwb7goeqm_Gr_PeS3rmTNMpgPIhHOlYIzTyVqRydZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeKHFlC$HE_4b541fe2abd23f09109201cac588012965010702003764000000128f77e48f41091092019b563eda7b563e1d00&sigCatVer=1"
         headers = {
             "Host": "encourage.kuaishou.com",
             "Connection": "keep-alive",
