@@ -6,23 +6,19 @@ import traceback
 import requests
 import json
 
-SIGN_LOG = 'logs/kuaishou.log'
+import hashlib
+
+SIGN_LOG = 'logs/kuaishou1.log'
 
 work_path = os.path.dirname(os.path.abspath(__file__))
 SIGN_LOG_FILE = os.path.join(work_path, SIGN_LOG)
 
-_cookie = os.getenv('KS_COOKIE1')
-# 检查变量是否存在
-if _cookie == '':
-    print("请先在环境变量里添加 \"KS_COOKIE\" 填写对应快手的 cookie 值")
-    exit(0)
 
-
-def get_baoxiang(token):
-    print('开始领取宝箱 💎💎')
+def get_baoxiang(token, __NS_sig3):
+    print('💎💎💎💎开始领取宝箱💎💎💎💎')
     access_token = ''
     try:
-        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/treasureBox/report?__NS_sig3=9b8bccfc7d671ac755c7bdc4c3c2c753efc95fd403d54bd94777d4d4d2d2d1d0efcf&sigCatVer=1"
+        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/treasureBox/report?__NS_sig3=" + __NS_sig3 + "&sigCatVer=1"
 
         # 定义请求头
         headers = {
@@ -46,19 +42,22 @@ def get_baoxiang(token):
         # 发送 POST 请求
         resp = requests.post(url, headers=headers, data=json.dumps({}))
         resp_json = resp.json()
-        title_reward_count = resp_json['data']['title']['rewardCount']
-        print(f"得到金币：{title_reward_count}")
+        if resp_json['result'] == 1:
+            title_reward_count = resp_json['data']['title']['rewardCount']
+            print(f"得到金币：{title_reward_count}")
+        else:
+            print(resp_json['error_msg'])
     except:
         print(f"获取异常:{traceback.format_exc()}")
 
+    
     return access_token
 
-
-def get_fanbu(token):
-    print("开始领取饭补 🍱")
+def get_fanbu(token, __NS_sig4):
+    print("🍱🍱🍱🍱开始领取饭补🍱🍱🍱🍱")
     try:
         # 获取当前的是否领取过饭补
-        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/detail?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuPEH73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZR3FHGMRsQPwfpaekre0Ra5-usMxO_S1KZimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeKHFlC$HE_4b541fe2abbaa5d31192018ad833e83ffb0107020037640000001ade22b05ba7d31192019b563eda7b563e2800&sigCatVer=1"
+        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/detail?__NS_sig4=" + __NS_sig4 + "&sigCatVer=1"
         headers = {
             "Host": "encourage.kuaishou.com",
             "Connection": "keep-alive",
@@ -81,7 +80,7 @@ def get_fanbu(token):
         if resp_json['result'] == 1:
             if resp_json['data']['mainButtonInfo']['buttonStatus'] == 'TO_COMPLETE':
 
-                url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/report?__NS_sig4=HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuPEH73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZB3FHGMRsAPwfpaekre0Ra5-K8MxO_S1Kpimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeJHFlC$HE_4b541fe2abbaa5d3119201f613e030e81901070200376700000010dd75b504b7d31192019b563eda7b563ebc00&sigCatVer=1"
+                url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/dish/report?__NS_sig4=" + __NS_sig4 + "&sigCatVer=1"
 
                 # 定义请求头
                 headers = {
@@ -119,9 +118,8 @@ def get_fanbu(token):
     except:
         print(f"获取异常:{traceback.format_exc()}")
 
-
 def get_money(token):
-    print('🥰开始获取当前的现金  💰️💰️💰️💰️💰️💰️💰️')
+    print('🥰🥰🥰🥰🥰开始获取当前的现金💰️💰️💰️💰️💰️')
     money = ''
     try:
         url = "https://encourage.kuaishou.com/rest/wd/encourage/home"
@@ -158,11 +156,10 @@ def get_money(token):
     return money
 
 
-
-def get_qiandao(token):
-    print('❤开始执行签到')
+def get_qiandao(token, __NS_sig3):
+    print('❤❤❤❤❤开始执行签到❤❤❤❤❤')
     try:
-        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/signIn/report?__NS_sig3=a1b1f6c6981e16fd6ffd9bfef9f8b4013acf360804ef71e37228eeeee8e8ebead5f5&sigCatVer=1"
+        url = "https://encourage.kuaishou.com/rest/wd/encourage/unionTask/signIn/report?__NS_sig3=" + __NS_sig3 + "&sigCatVer=1"
 
         # 定义请求头
         headers = {
@@ -195,11 +192,34 @@ def get_qiandao(token):
     except:
         print(f"获取异常:{traceback.format_exc()}")
 
+# 获取环境变量
+_cookie = os.getenv('KS_COOKIE1')
+
+# 检查变量是否存在
+if _cookie == '':
+    print("请先在环境变量里添加 \"KS_COOKIE\" 填写对应快手的 cookie 值")
+    exit(0)
+
+def gen_tokensig(sig,salt=""):
+    v = sig + salt
+    return hashlib.sha256(v.encode('utf-8')).hexdigest()
+
+def gen_sig(params,data):
+    dd = dict(params,**data)
+    dict_sort_res = dict(sorted(dd.items(),key=lambda x:x[0]))
+    ss = ""
+    for key,value in dict_sort_res.items():
+        if key not in ["sig","__NS_sig3","sig2"]:
+            ss += f"{key}={value}"
+    ss += "ca8e86efb32e"
+    return hashlib.md5(ss.encode()).hexdigest()
+
+
 
 def main():
-    get_qiandao(_cookie)
-    get_baoxiang(_cookie)
-    get_fanbu(_cookie)
+    get_baoxiang(_cookie, "9b8bccfc7d671ac755c7bdc4c3c2c753efc95fd403d54bd94777d4d4d2d2d1d0efcf")
+    get_fanbu(_cookie, "HUDR_sFnX-HFuAE5VsdPNKlLOPr4ntwVLcugxjxZz8_z61EHYFY07AGiHwMelb_ny_pMHxR_0BjgEKKQba1Uc3eSWmMYZtd0w8l4XDj-3MCjD__Ta_XvZSJ4TBB8KqqVKMgRgdptyHjC4q5WxZzlivWeuPEH73Q5s2-4u88UkwHrtgNYFpaoTLyzpjhJN-kWm8EpIT1cd-4gSarv9lyc5eoynpqIeL1p8oDC_aNVs06E48ZDBDPBAVd7Wcf92VBvKKxaMh3mQAe1nhm7Hio9fdjZvaMcUc1SdzvMQzAj21S59Nig74-a-EOa9uKbz3fSQfS_jkqGJAvkrRYO9ZB3FHGMRsAPwfpaekre0Ra5-K8MxO_S1Kpimvzg8hzW00xtV2EkPPYyfHfQ365dkZ2JctZayZle8i-X-z6H4p6yd16GOasouctNda1Yaxj6PrwadZeTwh5ckgKW0moc1WndwyJqoqIh222uMxhDr_q2L_eyoTgzO5p51-bAsaDmbuEH0je0KN8jtCfeJHFlC$HE_4b541fe2abbaa5d3119201f613e030e81901070200376700000010dd75b504b7d31192019b563eda7b563ebc00")
+    get_qiandao(_cookie, "a1b1f6c6981e16fd6ffd9bfef9f8b4013acf360804ef71e37228eeeee8e8ebead5f5")
     get_money(_cookie)
 
 if __name__ == '__main__':
