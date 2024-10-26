@@ -1,7 +1,7 @@
 #   --------------------------------注释区--------------------------------
-#   https://openapp.fmy90.com/auth/找token,格式：bearer eyJxxx
+#   https://openapp.fmy90.com/auth/找Authorization,格式：bearer eyJxxx
 #   变量:mnhs ，格式：多号@分割
-#   跟飞蚂蚁同一家，token有效期半个月
+#   跟飞蚂蚁同一家，Authorization有效期半个月
 #   走个头谢谢，下面二选一
 #   https://gitee.com/wry-fisher/push-notifications/blob/master/mnhstgm.png
 #   https://gitee.com/wry-fisher/push-notifications/blob/master/mnhstgm-2.png
@@ -16,7 +16,7 @@ import time
 import random
 
 # 初始化 User-Agent
-ua = ""
+ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090c11)XWEB/11275"
 
 def send(title, con):
     try:
