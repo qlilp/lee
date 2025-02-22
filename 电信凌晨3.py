@@ -126,7 +126,7 @@ def get_first_three(value):
     else:
         raise TypeError("error")
 
-def run_Time(hour minute,, second):    
+def run_Time(hour, minute, second):    
     date = datetime.datetime.now() 
     date_zero = date.replace(hour=hour,  minute=minute, second=second)
     return int(date_zero.timestamp()) 
