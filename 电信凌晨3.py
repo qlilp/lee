@@ -46,7 +46,7 @@ class RateLimiter:
         self.tokens  -= 1
 
     def add_new_tokens(self):
-        now = time.monotonic() 
+        现在 = time.monotonic() 
         time_since_update = now - self.updated_at 
         new_tokens = time_since_update * self.rate_limit 
         if new_tokens > 1:
@@ -495,7 +495,6 @@ async def main(time_diff, is_true_flag, hour):
 
 if __name__ == "__main__":
     h = datetime.datetime.now().hour 
-    h = 22  # 手动设置场次时间
     
     print(f"当前小时为: {h}")
     
