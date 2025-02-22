@@ -2,7 +2,7 @@
 新电信抢话费
 
 群里发的，未测试好，自测
-修改内容如下“
+修改内容如下
 1.删除内置的一个手机账号
 2.修改环境变量名保持和拉菲电信金豆本环境变量一致
 3.恢复瑞数通杀.js调用地址，确实也不知道是啥。398、399行注释
@@ -124,11 +124,11 @@ ss.cookies.set_policy(BlockAll())
 key = b'1234567`90koiuyhgtfrdews'
 iv = 8 * b'\0'
 
-public_key_b64 = """-----BEGIN PUBLIC KEY-----
+public_key_b64 = r"""-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBkLT15ThVgz6/NOl6s8GNPofdWzWbCkWnkaAm7O2LjkM1H7dMvzkiqdxU02jamGRHLX/ZNMCXHnPcW/sDhiFCBN18qFvy8g6VYb9QtroI09e176s+ZCtiv7hbin2cCTj99iUpnEloZm19lwHyo69u5UMiPMpq0/XKBO8lYhN/gwIDAQAB
 -----END PUBLIC KEY-----"""
 
-public_key_data = """-----BEGIN PUBLIC KEY-----
+public_key_data = r"""-----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+ugG5A8cZ3FqUKDwM57GM4io6JGcStivT8UdGt67PEOihLZTw3P7371+N47PrmsCpnTRzbTgcupKtUv8ImZalYk65dU8rjC/ridwhw9ffW2LBwvkEnDkkKKRi2liWIItDftJVBiWOh17o6gfbPoNrWORcAdcbpk2L+udld5kZNwIDAQAB
 -----END PUBLIC KEY-----"""
 
