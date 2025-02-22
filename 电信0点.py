@@ -1,19 +1,3 @@
-"""
-新电信抢话费
-
-群里发的，未测试好，自测
-修改内容如下
-1.删除内置的一个手机账号
-2.修改环境变量名保持和拉菲电信金豆本环境变量一致
-3.恢复瑞数通杀.js调用地址，确实也不知道是啥。398、399行注释
-
-环境变量chinaTelecomAccount，值为：账号#密码
-
-cron: 57 9,13,23 * * *
-const $ = new Env("新电信抢话费");
-
-"""
-
 import os
 import re
 import sys
@@ -57,7 +41,7 @@ class RateLimiter:
         self.tokens  -= 1
 
     def add_new_tokens(self):
-        now = time.monotonic() 
+        现在 = time.monotonic() 
         time_since_update = now - self.updated_at 
         new_tokens = time_since_update * self.rate_limit 
         if new_tokens > 1:
