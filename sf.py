@@ -9,11 +9,13 @@ import os
 import random
 import time
 import re
+import logging
 from datetime import datetime, timedelta
 from sys import exit
 import requests
 from requests.packages.urllib3.exceptions  import InsecureRequestWarning
 from datetime import datetime
+
 
 os.environ['NEW_VAR']  = 'sfsyUrl'  # 环境变量
 # 禁用安全请求警告
@@ -137,24 +139,100 @@ class RUN:
             Log(f"未知错误: {e}")
             return {"success": False, "errorMessage": "未知错误"}
 
-    def sign(self):
-        print(f'>>>>>>开始执行签到')
-        json_data = {"comeFrom": "vioin", "channelFrom": "WEIXIN"}
-        url = 'https://mcs-mimp-web.sf-express.com/mcs-mimp/commonPost/~memberNonactivity~integralTaskSignPlusService~automaticSignFetchPackage' 
-        url2 = 'https://mcs-mimp-web.sf-express.com/mcs-mimp/commonPost/~memberNonactivity~integralTaskSignPlusService~queryPointSignAwardList' 
-        url3 = 'https://mcs-mimp-web.sf-express.com/mcs-mimp/commonPost/~memberNonactivity~integralTaskSignPlusService~getUnFetchPointAndDiscount' 
-        result = self.do_request(url2,  data={"channelType": "1"})
-        result2 = self.do_request(url3,  data={})
-        response = self.do_request(url,  data=json_data)
-        if response.get('success')  == True:
-            count_day = response.get('obj',  {}).get('countDay', 0)
-            if response.get('obj')  and response['obj'].get('integralTaskSignPackageVOList'):
-                packet_name = response["obj"]["integralTaskSignPackageVOList"][0]["packetName"]
-                Log(f'>>>签到成功，获得【{packet_name}】，本周累计签到【{count_day + 1}】天')
+
+    """
+    顺丰快递签到功能类 
+    
+    该类用于实现顺丰快递的自动签到功能，并获取签到奖励信息。
+    包括签到请求、奖励查询和积分获取等功能。
+    """
+ 
+    def __init__(self):
+        """
+        初始化方法，设置请求所需的URL和默认参数。
+        """
+        self.base_url  = "https://mcs-mimp-web.sf-express.com/mcs-mimp/commonPost" 
+        self.urls  = {
+            "sign": f"{self.base_url}/~memberNonactivity~integralTaskSignPlusService~automaticSignFetchPackage", 
+            "award": f"{self.base_url}/~memberNonactivity~integralTaskSignPlusService~queryPointSignAwardList", 
+            "points": f"{self.base_url}/~memberNonactivity~integralTaskSignPlusService~getUnFetchPointAndDiscount" 
+        }
+        self.headers  = {
+            "Content-Type": "application/json",
+            # 可根据实际需求添加其他 headers 
+        }
+        # 配置日志 
+        logging.basicConfig( 
+            level=logging.INFO,
+            format="%(asctime)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
+        )
+        self.logger  = logging.getLogger(__name__) 
+ 
+    def do_request(self, url, method="POST", data=None, headers=None):
+        """
+        发送HTTP请求的方法 
+        
+        Args:
+            url (str): 请求的目标URL 
+            method (str): 请求方法，默认为 POST 
+            data (dict): 请求体数据 
+            headers (dict): 请求头，默认使用类内的 headers 
+        
+        Returns:
+            dict: 请求响应的结果（JSON格式）
+        
+        Raises:
+            requests.exceptions.RequestException:  请求过程中发生的异常 
+        """
+        try:
+            response = requests.request( 
+                method=method,
+                url=url,
+                json=data,
+                headers=headers or self.headers  
+            )
+            response.raise_for_status() 
+            return response.json() 
+        except requests.exceptions.RequestException  as e:
+            self.logger.error(f" 请求失败：{e}")
+            raise 
+ 
+    def sign_in(self):
+        """
+        执行签到操作，并获取签到结果。
+        """
+        try:
+            # 第一步：查询签到奖励信息 
+            award_response = self.do_request(self.urls["award"],  data={"channelType": "1"})
+            self.logger.info(f" 签到奖励信息查询结果：{award_response}")
+ 
+            # 第二步：获取未领取的积分和优惠信息 
+            points_response = self.do_request(self.urls["points"],  data={})
+            self.logger.info(f" 积分和优惠信息查询结果：{points_response}")
+ 
+            # 第三步：执行签到操作 
+            sign_data = {"comeFrom": "vioin", "channelFrom": "WEIXIN"}
+            sign_response = self.do_request(self.urls["sign"],  data=sign_data)
+ 
+            if not sign_response.get("success"): 
+                error_msg = sign_response.get("errorMessage",  "未知错误")
+                self.logger.error(f" 签到失败！原因：{error_msg}")
+                return 
+ 
+            # 解析签到结果 
+            obj = sign_response.get("obj",  {})
+            count_day = obj.get("countDay",  0)
+            packet_info = obj.get("integralTaskSignPackageVOList",  [])
+ 
+            if packet_info:
+                packet_name = packet_info[0].get("packetName", "未知奖励")
+                self.logger.info(f">>>  签到成功，获得【{packet_name}】，本周累计签到【{count_day + 1}】天")
             else:
-                Log(f'今日已签到，本周累计签到【{count_day + 1}】天')
-        else:
-            print(f'签到失败！原因：{response.get("errorMessage")}') 
+                self.logger.info(f">>>  今日已签到，本周累计签到【{count_day + 1}】天")
+ 
+        except Exception as e:
+            self.logger.error(f" 签到过程中发生错误：{e}")
 
     def superWelfare_receiveRedPacket(self):
         print(f'>>>>>>超值福利签到')
