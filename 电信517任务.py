@@ -81,7 +81,7 @@ jsCache = "Cache.js"
 fileContent = ""
 
 subprocess.Popen = partial(subprocess.Popen, encoding="utf-8")
-httpx._config.DEFAULT_CIPHERS += ":ALL:@SECLEVEL=1"
+#httpx._config.DEFAULT_CIPHERS += ":ALL:@SECLEVEL=1"
 
 
 def get_first_three(value):
