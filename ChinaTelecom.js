@@ -48,7 +48,7 @@
     _0x14c4e5 = "https://leafxcy.coding.net/api/user/leafxcy/project/validcode/shared-depot/validCode/git/blob/master/code.json",
     _0x4b73f5 = "JinDouMall";
   let _0x4f8ac1 = {};
-  const _0x15d9a8 = "./chinaTelecom_cache.json",
+  const _0x15d9a8 = "./chinaTelecom_cache2.json",
     _0x932305 = "Mozilla/5.0 (Linux; U; Android 12; zh-cn; ONEPLUS A9000 Build/QKQ1.190716.003) AppleWebKit/533.1 (KHTML, like Gecko) Version/5.0 Mobile Safari/533.1",
     _0x49b65a = "34d7cb0bcdf07523",
     _0x53d03f = "swedrftghyuiok09`7654321".split("").reverse().join(""),
