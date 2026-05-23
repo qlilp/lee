@@ -79,70 +79,84 @@ _invitation_round_used = set()
 def get_random_invitation_for_account(account_index=None, total_accounts=None):
     """
     根据配置的模式获取邀请链接和邀请码
-    
+
     Args:
         account_index: 账号索引（从0开始），用于 different 模式
         total_accounts: 总账号数，用于 different 模式
-    
+
     Returns:
         tuple: (invitation_link, invitation_code)
     """
     global _invitation_round_used, _account_invitation_assignments
-    
+
     mode = PRE_ASSIST_RANDOM_MODE
-    
+
+    invite_count = len(FIXED_PRE_ASSIST_INVITATION_CODES)
+
+    if invite_count <= 0:
+        print(" [邀请模式] 未配置任何预助力邀请码，跳过预助力")
+        return "", ""
+
+    # 保证链接数量和邀请码数量一致
+    if len(FIXED_PRE_ASSIST_INVITATION_LINKS) < invite_count:
+        print(" [邀请模式] 邀请链接数量异常，跳过预助力")
+        return "", ""
+
     if mode == "fixed":
         # 固定模式：所有账号使用同一个邀请码
-        idx = FIXED_PRE_ASSIST_RANDOM_INDEX if 0 <= FIXED_PRE_ASSIST_RANDOM_INDEX < 4 else 0
+        idx = FIXED_PRE_ASSIST_RANDOM_INDEX
+        if not (0 <= idx < invite_count):
+            idx = 0
+
         link = FIXED_PRE_ASSIST_INVITATION_LINKS[idx]
         code = FIXED_PRE_ASSIST_INVITATION_CODES[idx]
-        print(f"  [邀请模式] fixed - 使用第 {idx+1} 个邀请链接")
+        print(f" [邀请模式] fixed - 使用第 {idx + 1} 个邀请链接")
         return link, code
-    
+
     elif mode == "random":
         # 完全随机模式：每个账号独立随机抽取
-        idx = random.randint(0, 3)
+        idx = random.randint(0, invite_count - 1)
+
         link = FIXED_PRE_ASSIST_INVITATION_LINKS[idx]
         code = FIXED_PRE_ASSIST_INVITATION_CODES[idx]
-        print(f"  [邀请模式] random - 随机选择第 {idx+1} 个邀请链接")
+        print(f" [邀请模式] random - 随机选择第 {idx + 1} 个邀请链接")
         return link, code
-    
+
     elif mode == "different":
         # 不同账号使用不同邀请码模式：尽量让每个账号用不同的，用完一轮后重置
         if account_index is not None and account_index in _account_invitation_assignments:
-            # 已经分配过，直接返回
             idx = _account_invitation_assignments[account_index]
-            link = FIXED_PRE_ASSIST_INVITATION_LINKS[idx]
-            code = FIXED_PRE_ASSIST_INVITATION_CODES[idx]
-            print(f"  [邀请模式] different - 账号 {account_index+1} 使用已分配的第 {idx+1} 个邀请链接")
-            return link, code
-        
+            if 0 <= idx < invite_count:
+                link = FIXED_PRE_ASSIST_INVITATION_LINKS[idx]
+                code = FIXED_PRE_ASSIST_INVITATION_CODES[idx]
+                print(f" [邀请模式] different - 账号 {account_index + 1} 使用已分配的第 {idx + 1} 个邀请链接")
+                return link, code
+
         # 需要新分配
-        available_indices = [i for i in range(4) if i not in _invitation_round_used]
-        
+        available_indices = [i for i in range(invite_count) if i not in _invitation_round_used]
+
         if not available_indices:
             # 一轮用完了，重置
             _invitation_round_used.clear()
-            available_indices = list(range(4))
-            print(f"  [邀请模式] different - 完成一轮，重置邀请池")
-        
-        # 随机从可用中选择一个
+            available_indices = list(range(invite_count))
+            print(" [邀请模式] different - 完成一轮，重置邀请池")
+
         idx = random.choice(available_indices)
+
         _invitation_round_used.add(idx)
-        
+
         if account_index is not None:
             _account_invitation_assignments[account_index] = idx
-        
+
         link = FIXED_PRE_ASSIST_INVITATION_LINKS[idx]
         code = FIXED_PRE_ASSIST_INVITATION_CODES[idx]
-        print(f"  [邀请模式] different - 为账号 {account_index+1 if account_index is not None else '?'} 分配第 {idx+1} 个邀请链接")
+        print(f" [邀请模式] different - 为账号 {account_index + 1 if account_index is not None else '?'} 分配第 {idx + 1} 个邀请链接")
         return link, code
-    
+
     else:
         # 默认使用第一个
-        print(f"  [邀请模式] 未知模式 '{mode}'，回退到默认第1个邀请链接")
-        return FIXED_PRE_ASSIST_INVITATION_LINK, FIXED_PRE_ASSIST_INVITATION_CODE
-
+        print(f" [邀请模式] 未知模式 '{mode}'，回退到默认第1个邀请链接")
+        return FIXED_PRE_ASSIST_INVITATION_LINKS[0], FIXED_PRE_ASSIST_INVITATION_CODES[0]
 
 def reset_invitation_assignments():
     """重置邀请分配记录（用于新的运行批次）"""
