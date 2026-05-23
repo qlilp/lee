@@ -12,7 +12,7 @@
  * const $ = new Env('心喜')
  * cron: 43 12 * * *
  */
-const initScript = require('../utils/initScript')
+const initScript = require('./utils/initScript')
 const {$, notify, sudojia, checkUpdate} = initScript('心喜');
 const xinxiList = process.env.XINXI_TOKEN ? process.env.XINXI_TOKEN.split(/[\n&]/) : [];
 let message = '';
