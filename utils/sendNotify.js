@@ -758,44 +758,74 @@ function ddBotNotify(text, desp) {
 }
 
 function qywxBotNotify(text, desp) {
-    return new Promise((resolve) => {
-        const options = {
-            url: `${QYWX_ORIGIN}/cgi-bin/webhook/send?key=${QYWX_KEY}`,
-            json: {
-                msgtype: 'text',
-                text: {
-                    content: `${text}\n\n${desp}`,
-                },
-            },
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            timeout,
-        };
-        if (QYWX_KEY) {
-            $.post(options, (err, resp, data) => {
-                try {
-                    if (err) {
-                        console.log('\n企业微信发送通知消息失败！！\n');
-                        console.log(err);
-                    } else {
-                        data = JSON.parse(data);
-                        if (data.errcode === 0) {
-                            console.log('\n企业微信发送通知消息成功🎉。\n');
-                        } else {
-                            console.log(`${data.errmsg}\n`);
-                        }
-                    }
-                } catch (e) {
-                    $.logErr(e, resp);
-                } finally {
-                    resolve(data);
-                }
-            });
+  return new Promise((resolve) => {
+    const qywxOrigin =
+      typeof push_config !== 'undefined' && push_config.QYWX_ORIGIN
+        ? push_config.QYWX_ORIGIN
+        : typeof QYWX_ORIGIN !== 'undefined' && QYWX_ORIGIN
+        ? QYWX_ORIGIN
+        : 'https://qyapi.weixin.qq.com';
+
+    const qywxKey =
+      typeof push_config !== 'undefined' && push_config.QYWX_KEY
+        ? push_config.QYWX_KEY
+        : typeof QYWX_KEY !== 'undefined'
+        ? QYWX_KEY
+        : '';
+
+    if (!qywxKey) {
+      resolve();
+      return;
+    }
+
+    const payload = {
+      msgtype: 'text',
+      text: {
+        content: `${text}\n\n${desp}`,
+      },
+    };
+
+    const options = {
+      url: `${qywxOrigin}/cgi-bin/webhook/send?key=${qywxKey}`,
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout,
+    };
+
+    $.post(options, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log('企业微信发送通知消息失败😞\n', err);
         } else {
-            resolve();
+          if (typeof data === 'string') {
+            try {
+              data = JSON.parse(data);
+            } catch (e) {
+              console.log('企业微信返回内容不是合法 JSON：\n', data);
+              resolve(data);
+              return;
+            }
+          }
+
+          if (data && data.errcode === 0) {
+            console.log('企业微信发送通知消息成功🎉。\n');
+          } else {
+            console.log(
+              `企业微信发送通知消息异常 ${
+                data && data.errmsg ? data.errmsg : 'unknown error'
+              }\n`,
+            );
+          }
         }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve(data);
+      }
     });
+  });
 }
 
 function ChangeUserId(desp) {
