@@ -234,7 +234,35 @@ def login_by_password(username, password):
         "User-Agent": get_pc_ua(),
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "zh-CN,zh;q=0.9",
+        "Connection": "keep-alive",
     })
+
+    def dump_debug_html(name, text):
+        """保存调试 HTML 到脚本目录，方便排查"""
+        try:
+            path = os.path.join(SCRIPT_DIR, name)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(text)
+            print(f"🧩 已保存调试页面：{path}")
+        except Exception as e:
+            print(f"⚠️ 保存调试页面失败：{e}")
+
+    def find_first(patterns, text, name, required=True, default=""):
+        """
+        多规则提取参数。
+        patterns 可以传多个正则，匹配到第一个就返回。
+        """
+        for pattern in patterns:
+            m = re.search(pattern, text, re.S)
+            if m:
+                value = m.group(1)
+                if value is not None:
+                    return value.strip()
+
+        if required:
+            dump_debug_html(f"ty189_login_debug_{name}.html", text)
+            raise ValueError(f"登录页参数提取失败：{name}")
+        return default
 
     try:
         url_token = (
@@ -243,39 +271,126 @@ def login_by_password(username, password):
             "&redirectURL=https://m.cloud.189.cn/zhuanti/2021/shakeLottery/index.html"
         )
 
-        r = s.get(url_token, timeout=15)
-        match = re.search(r"https?://[^\s'\"]+", r.text)
+        # 第一步：获取 udb 页面
+        r = s.get(url_token, timeout=15, allow_redirects=True)
+        html1 = r.text
 
-        if not match:
+        # 提取动态 URL，兼容多种写法
+        url = None
+
+        # 原脚本逻辑：页面里有一段 open.e.189.cn 地址
+        urls = re.findall(r"https?://[^\s'\"<>]+", html1)
+        for item in urls:
+            if "open.e.189.cn" in item or "e.189.cn" in item:
+                url = item.replace("&amp;", "&")
+                break
+
+        # 兼容 location.href / window.location
+        if not url:
+            url = find_first([
+                r"location\.href\s*=\s*['\"]([^'\"]+)['\"]",
+                r"window\.location\s*=\s*['\"]([^'\"]+)['\"]",
+                r"window\.location\.href\s*=\s*['\"]([^'\"]+)['\"]",
+            ], html1, "first_redirect_url", required=False)
+
+        if not url:
+            dump_debug_html("ty189_login_debug_step1.html", html1)
             print("❌ 错误：未找到动态登录页")
-            print(r.text[:500])
+            print(html1[:800])
             return None
 
-        url = match.group()
-        r = s.get(url, timeout=15)
+        # 第二步：进入动态登录页
+        r = s.get(url, timeout=15, allow_redirects=True)
+        html2 = r.text
 
-        match = re.search(r'href="([^"]+)"', r.text)
-        if not match:
-            print("❌ 错误：登录入口获取失败")
-            print(r.text[:500])
+        # 提取真正登录入口 href，不能随便取第一个 href
+        href = None
+        hrefs = re.findall(r'href=["\']([^"\']+)["\']', html2, re.S)
+
+        for item in hrefs:
+            if "open.e.189.cn" in item or "login" in item or "Login" in item:
+                href = item.replace("&amp;", "&")
+                break
+
+        # 兼容 action
+        if not href:
+            href = find_first([
+                r'action=["\']([^"\']+)["\']',
+                r'location\.href\s*=\s*["\']([^"\']+)["\']',
+                r'window\.location\.href\s*=\s*["\']([^"\']+)["\']',
+            ], html2, "login_href", required=False)
+
+        if not href:
+            # 有些时候当前页面已经是登录页，不需要第三跳
+            if "j_rsaKey" in html2 or "captchaToken" in html2 or "loginSubmit.do" in html2:
+                html = html2
+            else:
+                dump_debug_html("ty189_login_debug_step2.html", html2)
+                print("❌ 错误：登录入口获取失败")
+                print(html2[:800])
+                return None
+        else:
+            if href.startswith("//"):
+                href = "https:" + href
+            elif href.startswith("/"):
+                parsed = urlparse(r.url)
+                href = f"{parsed.scheme}://{parsed.netloc}{href}"
+            elif not href.startswith("http"):
+                parsed = urlparse(r.url)
+                href = f"{parsed.scheme}://{parsed.netloc}/{href}"
+
+            r = s.get(href, timeout=15, allow_redirects=True)
+            html = r.text
+
+        # 保存最后登录页，方便你排查。正常后可注释掉。
+        # dump_debug_html("ty189_login_debug_final.html", html)
+
+        # 如果返回的是异常页，提前提示
+        if "登录异常" in html or "启动失败" in html:
+            dump_debug_html("ty189_login_debug_error.html", html)
+            print("❌ 获取到的是天翼登录异常页，不是正常登录页")
+            print(html[:800])
             return None
 
-        href = match.group(1)
-        r = s.get(href, timeout=15)
+        # 提取参数，兼容 input 单双引号、JS 变量等多种写法
+        captcha_token = find_first([
+            r"name=['\"]captchaToken['\"]\s+value=['\"]([^'\"]*)['\"]",
+            r"value=['\"]([^'\"]*)['\"]\s+name=['\"]captchaToken['\"]",
+            r"id=['\"]captchaToken['\"]\s+value=['\"]([^'\"]*)['\"]",
+            r"captchaToken['\"]?\s*[:=]\s*['\"]([^'\"]*)['\"]",
+            r"captchaToken'\s+value='([^']*)'",
+            r'captchaToken"\s+value="([^"]*)"',
+        ], html, "captchaToken", required=False, default="")
 
-        html = r.text
+        lt = find_first([
+            r'lt\s*=\s*["\']([^"\']+)["\']',
+            r'name=["\']lt["\']\s+value=["\']([^"\']+)["\']',
+            r'value=["\']([^"\']+)["\']\s+name=["\']lt["\']',
+        ], html, "lt")
 
-        def find_one(pattern, name):
-            result = re.findall(pattern, html)
-            if not result:
-                raise ValueError(f"登录页参数提取失败：{name}")
-            return result[0]
+        return_url = find_first([
+            r"returnUrl\s*=\s*['\"]([^'\"]+)['\"]",
+            r"returnUrl=\s*['\"]([^'\"]+)['\"]",
+            r"name=['\"]returnUrl['\"]\s+value=['\"]([^'\"]+)['\"]",
+            r"value=['\"]([^'\"]+)['\"]\s+name=['\"]returnUrl['\"]",
+        ], html, "returnUrl")
 
-        captcha_token = find_one(r"captchaToken' value='(.+?)'", "captchaToken")
-        lt = find_one(r'lt = "(.+?)"', "lt")
-        return_url = find_one(r"returnUrl= '(.+?)'", "returnUrl")
-        param_id = find_one(r'paramId = "(.+?)"', "paramId")
-        j_rsakey = find_one(r'j_rsaKey" value="(\S+)"', "j_rsaKey")
+        param_id = find_first([
+            r'paramId\s*=\s*["\']([^"\']+)["\']',
+            r'name=["\']paramId["\']\s+value=["\']([^"\']+)["\']',
+            r'value=["\']([^"\']+)["\']\s+name=["\']paramId["\']',
+        ], html, "paramId")
+
+        j_rsakey = find_first([
+            r'name=["\']j_rsaKey["\']\s+value=["\']([^"\']+)["\']',
+            r'value=["\']([^"\']+)["\']\s+name=["\']j_rsaKey["\']',
+            r'id=["\']j_rsaKey["\']\s+value=["\']([^"\']+)["\']',
+            r'j_rsaKey["\']?\s*[:=]\s*["\']([^"\']+)["\']',
+        ], html, "j_rsaKey")
+
+        print("✅ 登录页参数提取成功")
+        if not captcha_token:
+            print("ℹ️ 当前登录页未提取到 captchaToken，尝试置空提交")
 
         s.headers.update({"lt": lt})
 
@@ -298,6 +413,10 @@ def login_by_password(username, password):
             "User-Agent": get_pc_ua(),
             "Referer": "https://open.e.189.cn/",
             "Origin": "https://open.e.189.cn",
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "X-Requested-With": "XMLHttpRequest",
+            "lt": lt,
         }
 
         r = s.post(
@@ -310,7 +429,8 @@ def login_by_password(username, password):
         login_json = safe_json(r)
         if not login_json:
             print("❌ 登录接口返回非 JSON：")
-            print(r.text[:800])
+            print(r.text[:1000])
+            dump_debug_html("ty189_login_submit_non_json.html", r.text)
             return None
 
         if login_json.get("result", 1) != 0:
@@ -322,7 +442,7 @@ def login_by_password(username, password):
 
             if "设备ID不存在" in msg_str or "二次设备校验" in msg_str:
                 print("⚠️ 当前账号仍然触发设备二次校验。")
-                print("👉 你已经关闭设备锁的话，建议先用浏览器或天翼云盘 App 手动登录一次该账号。")
+                print("👉 建议先用浏览器或天翼云盘 App 手动登录一次该账号。")
                 print("👉 手动登录成功后，再运行本脚本。")
 
             if "验证码" in msg_str or "validateCode" in msg_str:
@@ -337,7 +457,7 @@ def login_by_password(username, password):
             print(json.dumps(login_json, ensure_ascii=False))
             return None
 
-        s.get(to_url, timeout=15)
+        s.get(to_url, timeout=15, allow_redirects=True)
 
         print("✅ 账号密码登录成功")
         save_session_cookie(username, s)
