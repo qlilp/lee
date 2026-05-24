@@ -5,35 +5,31 @@
 天翼云盘签到脚本优化版
 
 环境变量：
-ty_username  多账号用 & 分隔
-ty_password  多账号用 & 分隔
+ty_username 多账号用 & 分隔
+ty_password 多账号用 & 分隔
 
 可选推送：
 WXPUSHER_APP_TOKEN
-WXPUSHER_UID  多个 UID 用 & 分隔
+WXPUSHER_UID 多个 UID 用 & 分隔
 
-优化点：
-1. 首次账号密码登录成功后自动保存 Cookie 到脚本目录
-2. 后续优先使用本地 Cookie，减少登录风控
-3. Cookie 失效后自动重新账号密码登录
-4. 登录失败打印完整接口返回
+调试开关：
+TY_DEBUG_LOGIN=1 默认开启
+TY_DEBUG_LOGIN=0 关闭登录页调试文件保存
 """
 
-import time
 import os
-import random
+import re
 import json
+import time
+import random
 import base64
 import hashlib
-import rsa
 import requests
-import re
-from urllib.parse import urlparse, urljoin
+import rsa
+import hmac
+from email.utils import formatdate
+from urllib.parse import urljoin, urlparse, quote
 from requests.utils import dict_from_cookiejar, cookiejar_from_dict
-
-
-BI_RM = list("0123456789abcdefghijklmnopqrstuvwxyz")
-B64MAP = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 
 # =========================
@@ -43,16 +39,24 @@ B64MAP = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 COOKIE_STORE_FILE = os.path.join(SCRIPT_DIR, "ty189_cookie_store.json")
 
-ty_usernames = os.getenv("ty_username").split('&') if os.getenv("ty_username") else []
-ty_passwords = os.getenv("ty_password").split('&') if os.getenv("ty_password") else []
+ty_usernames = os.getenv("ty_username").split("&") if os.getenv("ty_username") else []
+ty_passwords = os.getenv("ty_password").split("&") if os.getenv("ty_password") else []
 
 if not ty_usernames or not ty_passwords:
     raise ValueError("❌ 请设置环境变量 ty_username 和 ty_password")
 
-accounts = [{"username": u.strip(), "password": p.strip()} for u, p in zip(ty_usernames, ty_passwords)]
+accounts = [
+    {
+        "username": u.strip(),
+        "password": p.strip()
+    }
+    for u, p in zip(ty_usernames, ty_passwords)
+]
 
 WXPUSHER_APP_TOKEN = os.getenv("WXPUSHER_APP_TOKEN")
-WXPUSHER_UIDS = os.getenv("WXPUSHER_UID", "").split('&') if os.getenv("WXPUSHER_UID") else []
+WXPUSHER_UIDS = os.getenv("WXPUSHER_UID", "").split("&") if os.getenv("WXPUSHER_UID") else []
+
+TY_DEBUG_LOGIN = os.getenv("TY_DEBUG_LOGIN", "1") != "0"
 
 
 # =========================
@@ -60,194 +64,14 @@ WXPUSHER_UIDS = os.getenv("WXPUSHER_UID", "").split('&') if os.getenv("WXPUSHER_
 # =========================
 
 def mask_phone(phone):
-    """隐藏手机号中间四位"""
     if not phone:
         return ""
     return phone[:3] + "****" + phone[-4:] if len(phone) >= 7 else phone
 
 
 def account_key(username):
-    """用账号生成本地 Cookie 存储 key，避免明文账号作为 key"""
     return hashlib.md5(username.encode("utf-8")).hexdigest()
 
-
-def int2char(a):
-    return BI_RM[a]
-
-
-def b64tohex(a):
-    d = ""
-    e = 0
-    c = 0
-    for i in range(len(a)):
-        if list(a)[i] != "=":
-            v = B64MAP.index(list(a)[i])
-            if e == 0:
-                e = 1
-                d += int2char(v >> 2)
-                c = 3 & v
-            elif e == 1:
-                e = 2
-                d += int2char(c << 2 | v >> 4)
-                c = 15 & v
-            elif e == 2:
-                e = 3
-                d += int2char(c)
-                d += int2char(v >> 2)
-                c = 3 & v
-            else:
-                e = 0
-                d += int2char(c << 2 | v >> 4)
-                d += int2char(15 & v)
-    if e == 1:
-        d += int2char(c << 2)
-    return d
-
-
-def rsa_encode(text, pub_key):
-    """
-    天翼登录 RSA 加密兼容版：
-    - 支持 encryptConf 返回的裸 base64 公钥
-    - 支持 PEM 格式公钥
-    - 自动修复 base64 Incorrect padding
-    """
-    import base64
-    import rsa
-
-    if text is None:
-        text = ""
-
-    if not pub_key:
-        raise ValueError("RSA 公钥为空")
-
-    pub_key = str(pub_key).strip()
-
-    # 去掉可能的 {RSA} 前缀
-    pub_key = pub_key.replace("{RSA}", "").strip()
-
-    # 情况 1：已经是 PEM
-    if "BEGIN PUBLIC KEY" in pub_key:
-        pem = pub_key
-    else:
-        # 情况 2：encryptConf 返回的裸 base64
-        # 清理换行、空格
-        key_b64 = re.sub(r"\s+", "", pub_key)
-
-        # 修复 base64 padding
-        missing_padding = len(key_b64) % 4
-        if missing_padding:
-            key_b64 += "=" * (4 - missing_padding)
-
-        pem = (
-            "-----BEGIN PUBLIC KEY-----\n"
-            + "\n".join([key_b64[i:i + 64] for i in range(0, len(key_b64), 64)])
-            + "\n-----END PUBLIC KEY-----"
-        )
-
-    try:
-        public_key = rsa.PublicKey.load_pkcs1_openssl_pem(pem.encode())
-    except Exception as e:
-        print(f"❌ RSA 公钥加载失败：{e}")
-        print(f"DEBUG pub_key length: {len(pub_key)}")
-        print(f"DEBUG pub_key head: {pub_key[:50]}")
-        raise
-
-    encrypted = rsa.encrypt(str(text).encode("utf-8"), public_key)
-
-    return encrypted.hex()
-
-
-def safe_json(resp):
-    """安全解析 JSON"""
-    try:
-        return resp.json()
-    except Exception:
-        return None
-
-
-# =========================
-# Cookie 存储
-# =========================
-
-def load_cookie_store():
-    if not os.path.exists(COOKIE_STORE_FILE):
-        return {}
-
-    try:
-        with open(COOKIE_STORE_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"⚠️ 读取 Cookie 文件失败：{e}")
-        return {}
-
-
-def save_cookie_store(data):
-    try:
-        with open(COOKIE_STORE_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        try:
-            os.chmod(COOKIE_STORE_FILE, 0o600)
-        except Exception:
-            pass
-    except Exception as e:
-        print(f"⚠️ 保存 Cookie 文件失败：{e}")
-
-
-def save_session_cookie(username, session):
-    """保存当前 session cookie"""
-    store = load_cookie_store()
-    key = account_key(username)
-
-    store[key] = {
-        "account": mask_phone(username),
-        "cookies": dict_from_cookiejar(session.cookies),
-        "saved_at": time.strftime("%Y-%m-%d %H:%M:%S")
-    }
-
-    save_cookie_store(store)
-    print(f"💾 Cookie 已保存：{os.path.basename(COOKIE_STORE_FILE)}")
-
-
-def load_session_from_cookie(username):
-    """从本地 Cookie 创建 session"""
-    store = load_cookie_store()
-    key = account_key(username)
-
-    if key not in store:
-        return None
-
-    cookies = store.get(key, {}).get("cookies")
-    saved_at = store.get(key, {}).get("saved_at", "")
-
-    if not cookies:
-        return None
-
-    s = requests.Session()
-    s.cookies = cookiejar_from_dict(cookies)
-
-    s.headers.update({
-        "User-Agent": get_mobile_ua(),
-        "Referer": "https://m.cloud.189.cn/"
-    })
-
-    print(f"🍪 已加载本地 Cookie，上次保存时间：{saved_at}")
-    return s
-
-
-def delete_saved_cookie(username):
-    """删除某个账号的本地 Cookie"""
-    store = load_cookie_store()
-    key = account_key(username)
-
-    if key in store:
-        store.pop(key)
-        save_cookie_store(store)
-        print("🧹 已删除失效 Cookie")
-
-
-# =========================
-# UA
-# =========================
 
 def get_pc_ua():
     return (
@@ -268,35 +92,22 @@ def get_mobile_ua():
     )
 
 
-# =========================
-# 登录逻辑
-# =========================
+def safe_json(resp):
+    try:
+        return resp.json()
+    except Exception:
+        try:
+            return json.loads(resp.text)
+        except Exception:
+            return None
 
 
-# 登录调试开关：默认开启。正常跑通后可以在环境变量里设置 TY_DEBUG_LOGIN=0 关闭。
-TY_DEBUG_LOGIN = os.getenv("TY_DEBUG_LOGIN", "1") != "0"
-
-
-def is_probably_image_url(url):
-    """判断 URL 是否明显是图片/静态资源"""
-    if not url:
-        return False
-
-    lower = url.lower().split("?")[0]
-    image_exts = [
-        ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico",
-        ".svg", ".bmp", ".css", ".js", ".woff", ".woff2", ".ttf"
-    ]
-    return any(lower.endswith(ext) for ext in image_exts)
+def print_response_debug(label, resp):
+    ct = resp.headers.get("Content-Type", "")
+    print(f"DEBUG {label}: status={resp.status_code}, ct={ct}, len={len(resp.content)}, url={resp.url}")
 
 
 def dump_debug_response(resp, filename_prefix):
-    """
-    保存调试响应。
-    - HTML/文本保存为 .html
-    - 图片保存为 .png/.bin
-    - 同时保存 meta 信息
-    """
     if not TY_DEBUG_LOGIN:
         return
 
@@ -329,12 +140,14 @@ def dump_debug_response(resp, filename_prefix):
             path = os.path.join(SCRIPT_DIR, f"{filename_prefix}.{ext}")
             with open(path, "wb") as f:
                 f.write(resp.content)
+
             print(f"🧩 已保存图片调试文件：{path}")
             print(f"🧩 已保存响应信息：{meta_path}")
         else:
             path = os.path.join(SCRIPT_DIR, f"{filename_prefix}.html")
             with open(path, "w", encoding="utf-8", errors="ignore") as f:
                 f.write(resp.text)
+
             print(f"🧩 已保存页面调试文件：{path}")
             print(f"🧩 已保存响应信息：{meta_path}")
 
@@ -342,26 +155,109 @@ def dump_debug_response(resp, filename_prefix):
         print(f"⚠️ 保存调试响应失败：{e}")
 
 
-def print_response_debug(label, resp):
-    """打印每一步请求信息"""
-    ct = resp.headers.get("Content-Type", "")
-    print(f"DEBUG {label}: status={resp.status_code}, ct={ct}, len={len(resp.content)}, url={resp.url}")
+# =========================
+# Cookie 存储
+# =========================
+
+def load_cookie_store():
+    if not os.path.exists(COOKIE_STORE_FILE):
+        return {}
+
+    try:
+        with open(COOKIE_STORE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"⚠️ 读取 Cookie 文件失败：{e}")
+        return {}
+
+
+def save_cookie_store(data):
+    try:
+        with open(COOKIE_STORE_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        try:
+            os.chmod(COOKIE_STORE_FILE, 0o600)
+        except Exception:
+            pass
+    except Exception as e:
+        print(f"⚠️ 保存 Cookie 文件失败：{e}")
+
+
+def save_session_cookie(username, session):
+    store = load_cookie_store()
+    key = account_key(username)
+
+    store[key] = {
+        "account": mask_phone(username),
+        "cookies": dict_from_cookiejar(session.cookies),
+        "saved_at": time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    save_cookie_store(store)
+    print(f"💾 Cookie 已保存：{os.path.basename(COOKIE_STORE_FILE)}")
+
+
+def load_session_from_cookie(username):
+    store = load_cookie_store()
+    key = account_key(username)
+
+    if key not in store:
+        return None
+
+    cookies = store.get(key, {}).get("cookies")
+    saved_at = store.get(key, {}).get("saved_at", "")
+
+    if not cookies:
+        return None
+
+    s = requests.Session()
+    s.cookies = cookiejar_from_dict(cookies)
+    s.headers.update({
+        "User-Agent": get_mobile_ua(),
+        "Referer": "https://m.cloud.189.cn/"
+    })
+
+    print(f"🍪 已加载本地 Cookie，上次保存时间：{saved_at}")
+    return s
+
+
+def delete_saved_cookie(username):
+    store = load_cookie_store()
+    key = account_key(username)
+
+    if key in store:
+        store.pop(key)
+        save_cookie_store(store)
+        print("🧹 已删除失效 Cookie")
+
+
+# =========================
+# 登录页辅助函数
+# =========================
+
+def is_probably_image_url(url):
+    if not url:
+        return False
+
+    lower = url.lower().split("?")[0]
+    exts = [
+        ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".svg", ".bmp",
+        ".css", ".js", ".woff", ".woff2", ".ttf"
+    ]
+    return any(lower.endswith(ext) for ext in exts)
 
 
 def is_html_response(resp):
-    """判断是否可以当成 HTML 解析"""
     ct = resp.headers.get("Content-Type", "").lower()
 
     if "image/" in ct:
         return False
-
     if "text/html" in ct:
         return True
-
     if "application/xhtml" in ct:
         return True
 
-    # 有些接口 Content-Type 不规范，兜底判断内容
     text_head = resp.text[:500].lower() if resp.text else ""
     if "<html" in text_head or "<!doctype html" in text_head:
         return True
@@ -369,125 +265,7 @@ def is_html_response(resp):
     return False
 
 
-def html_has_login_params(html):
-    """判断当前 HTML 是否像真正的天翼登录页"""
-    if not html:
-        return False
-
-    keywords = [
-        "j_rsaKey",
-        "paramId",
-        "returnUrl",
-        "loginSubmit.do",
-        "captchaToken",
-    ]
-
-    return any(k in html for k in keywords)
-
-
-def find_first(patterns, text, name, required=True, default=""):
-    """
-    多规则提取参数。
-    匹配到第一个就返回。
-    """
-    for pattern in patterns:
-        m = re.search(pattern, text, re.S)
-        if m:
-            value = m.group(1)
-            if value is not None:
-                return value.strip()
-
-    if required:
-        raise ValueError(f"登录页参数提取失败：{name}")
-
-    return default
-
-
-def extract_candidate_urls(html, base_url):
-    """
-    从页面中提取可能的登录跳转 URL。
-    重点：只提取可能是页面的链接，过滤图片、css、js、统计像素。
-    """
-    candidates = []
-
-    if not html:
-        return candidates
-
-    patterns = [
-        # JS 跳转
-        r"location\.href\s*=\s*['\"]([^'\"]+)['\"]",
-        r"window\.location\.href\s*=\s*['\"]([^'\"]+)['\"]",
-        r"window\.location\s*=\s*['\"]([^'\"]+)['\"]",
-        r"location\.replace\(\s*['\"]([^'\"]+)['\"]\s*\)",
-        r"top\.location\.href\s*=\s*['\"]([^'\"]+)['\"]",
-        r"self\.location\.href\s*=\s*['\"]([^'\"]+)['\"]",
-
-        # href/action
-        r'href=["\']([^"\']+)["\']',
-        r'action=["\']([^"\']+)["\']',
-
-        # 纯 URL
-        r'(https?://[^\s\'"<>]+)',
-    ]
-
-    for pattern in patterns:
-        for m in re.findall(pattern, html, re.S):
-            url = m.strip().replace("&amp;", "&")
-
-            if not url:
-                continue
-
-            if url.startswith("javascript:"):
-                continue
-
-            if url.startswith("#"):
-                continue
-
-            full_url = urljoin(base_url, url)
-
-            # 过滤明显静态资源
-            if is_probably_image_url(full_url):
-                continue
-
-            # 过滤统计/埋点/图片相关
-            bad_words = [
-                "favicon",
-                "logo",
-                "img",
-                "image",
-                "pixel",
-                "track",
-                "tongji",
-                "analytics",
-                "css",
-                ".js",
-            ]
-            lower_url = full_url.lower()
-            if any(w in lower_url for w in bad_words):
-                continue
-
-            # 优先保留天翼登录相关地址
-            good_words = [
-                "open.e.189.cn",
-                "e.189.cn",
-                "udb",
-                "login",
-                "oauth2",
-                "authorize",
-            ]
-
-            if any(w in lower_url for w in good_words):
-                if full_url not in candidates:
-                    candidates.append(full_url)
-
-    return candidates
-
-
 def fetch_login_page(session, url, label):
-    """
-    请求某个候选登录页。
-    如果是图片/静态资源，不当成 HTML。
-    """
     try:
         resp = session.get(url, timeout=15, allow_redirects=True)
         print_response_debug(label, resp)
@@ -498,46 +276,138 @@ def fetch_login_page(session, url, label):
             return None, resp
 
         return resp.text, resp
-
     except Exception as e:
         print(f"⚠️ 请求 {label} 异常：{e}")
         return None, None
 
 
+def find_first(patterns, html, name="", required=False, default=""):
+    for p in patterns:
+        m = re.search(p, html, re.I | re.S)
+        if m:
+            return m.group(1).strip()
+
+    if required:
+        raise ValueError(f"未能从登录页提取参数：{name}")
+
+    return default
+
+
+def extract_input_value(html, field_name):
+    if not html:
+        return ""
+
+    inputs = re.findall(r"<input\b[^>]*>", html, re.I | re.S)
+    for tag in inputs:
+        has_name = re.search(
+            rf'\bname\s*=\s*["\']{re.escape(field_name)}["\']',
+            tag,
+            re.I
+        )
+        has_id = re.search(
+            rf'\bid\s*=\s*["\']{re.escape(field_name)}["\']',
+            tag,
+            re.I
+        )
+
+        if not has_name and not has_id:
+            continue
+
+        m = re.search(r'\bvalue\s*=\s*["\']([^"\']*)["\']', tag, re.I | re.S)
+        if m:
+            return m.group(1).strip()
+
+    return ""
+
+
+def html_has_login_params(html):
+    if not html:
+        return False
+
+    keys = [
+        "loginSubmit.do",
+        "paramId",
+        "returnUrl",
+        "j_rsaKey",
+        "captchaToken",
+        "encryptConf.do"
+    ]
+
+    hit = sum(1 for k in keys if k in html)
+    return hit >= 2
+
+
+def extract_candidate_urls(html, base_url):
+    candidates = []
+
+    patterns = [
+        r'href=["\']([^"\']+)["\']',
+        r'action=["\']([^"\']+)["\']',
+        r'src=["\']([^"\']+)["\']',
+        r'url\s*:\s*["\']([^"\']+)["\']',
+        r'location\.href\s*=\s*["\']([^"\']+)["\']',
+        r'window\.location\s*=\s*["\']([^"\']+)["\']',
+        r'var\s+\w+\s*=\s*["\']([^"\']+)["\']',
+    ]
+
+    for pattern in patterns:
+        for m in re.findall(pattern, html, re.I | re.S):
+            url = m.strip().replace("&amp;", "&")
+
+            if not url:
+                continue
+            if url.startswith("javascript:"):
+                continue
+            if url.startswith("#"):
+                continue
+
+            full_url = urljoin(base_url, url)
+
+            if is_probably_image_url(full_url):
+                continue
+
+            lower_url = full_url.lower()
+
+            bad_words = [
+                "favicon", "logo", "img", "image", "pixel", "track",
+                "tongji", "analytics", "css", ".js"
+            ]
+
+            if any(w in lower_url for w in bad_words):
+                continue
+
+            good_words = [
+                "open.e.189.cn", "e.189.cn", "udb", "login", "oauth2",
+                "authorize", "autoLogin"
+            ]
+
+            if any(w.lower() in lower_url for w in good_words):
+                if full_url not in candidates:
+                    candidates.append(full_url)
+
+    return candidates
+
+
+# =========================
+# RSA / 加密配置
+# =========================
+
 def normalize_j_rsakey(pubkey):
-    """
-    规范化 RSA 公钥。
-    rsa_encode() 里会自己拼接 BEGIN/END，所以这里要去掉头尾。
-    """
     if not pubkey:
         return ""
 
     pubkey = str(pubkey).strip()
-
     pubkey = pubkey.replace("-----BEGIN PUBLIC KEY-----", "")
     pubkey = pubkey.replace("-----END PUBLIC KEY-----", "")
     pubkey = pubkey.replace("\r", "")
     pubkey = pubkey.replace("\n", "")
     pubkey = pubkey.replace(" ", "")
-
+    pubkey = pubkey.replace("{RSA}", "")
+    pubkey = pubkey.replace("{NRP}", "")
     return pubkey.strip()
 
 
 def extract_pubkey_from_json(data):
-    """
-    从不同结构的 JSON 里尝试提取公钥。
-    兼容：
-    {
-        "data": {
-            "pubKey": "..."
-        }
-    }
-
-    或：
-    {
-        "pubKey": "..."
-    }
-    """
     if not isinstance(data, dict):
         return ""
 
@@ -546,7 +416,7 @@ def extract_pubkey_from_json(data):
         "publicKey",
         "j_rsaKey",
         "rsaKey",
-        "key",
+        "key"
     ]
 
     for k in possible_keys:
@@ -564,7 +434,9 @@ def extract_pubkey_from_json(data):
 
 def fetch_j_rsakey_from_api(session, referer_url="https://open.e.189.cn/"):
     """
-    当登录页 HTML 里没有 j_rsaKey 时，尝试从天翼登录配置接口获取 RSA 公钥。
+    从 encryptConf.do 获取：
+    1. RSA 公钥
+    2. 加密前缀，例如 {NRP}
     """
     print("🔎 HTML 中未找到 j_rsaKey，尝试从接口获取 RSA 公钥...")
 
@@ -638,13 +510,17 @@ def fetch_j_rsakey_from_api(session, referer_url="https://open.e.189.cn/"):
 
             print(f"DEBUG encryptConf JSON {idx}：{json.dumps(data, ensure_ascii=False)}")
 
-            enc_data = data.get("data", {})
+            enc_data = data.get("data", {}) if isinstance(data, dict) else {}
             rsa_prefix = enc_data.get("pre") or "{RSA}"
 
             pubkey = extract_pubkey_from_json(data)
+
             if pubkey:
+                pubkey = normalize_j_rsakey(pubkey)
+
                 print(f"✅ 已从 encryptConf 接口获取 RSA 公钥，长度：{len(pubkey)}")
                 print(f"✅ 已从 encryptConf 接口获取加密前缀：{rsa_prefix}")
+
                 return pubkey, rsa_prefix
 
         except Exception as e:
@@ -653,43 +529,68 @@ def fetch_j_rsakey_from_api(session, referer_url="https://open.e.189.cn/"):
     print("❌ encryptConf 接口未能获取 RSA 公钥")
     return "", "{RSA}"
 
-def extract_input_value(html, field_name):
+
+def rsa_encode(text, pub_key):
     """
-    从 input 标签中提取指定 name/id 的 value。
-    避免 lt 被 alt="xxx" 误匹配。
+    天翼登录 RSA 加密：
+    - 输入 encryptConf 返回的裸 base64 公钥
+    - 输出 RSA 加密后的 hex
     """
-    if not html:
-        return ""
+    if text is None:
+        text = ""
 
-    inputs = re.findall(r"<input\b[^>]*>", html, re.I | re.S)
+    if not pub_key:
+        raise ValueError("RSA 公钥为空")
 
-    for tag in inputs:
-        has_name = re.search(
-            rf'\bname\s*=\s*["\']{re.escape(field_name)}["\']',
-            tag,
-            re.I
-        )
-        has_id = re.search(
-            rf'\bid\s*=\s*["\']{re.escape(field_name)}["\']',
-            tag,
-            re.I
-        )
+    pub_key = normalize_j_rsakey(pub_key)
 
-        if not has_name and not has_id:
-            continue
+    missing_padding = len(pub_key) % 4
+    if missing_padding:
+        pub_key += "=" * (4 - missing_padding)
 
-        m = re.search(r'\bvalue\s*=\s*["\']([^"\']*)["\']', tag, re.I | re.S)
-        if m:
-            return m.group(1).strip()
+    pem = (
+        "-----BEGIN PUBLIC KEY-----\n"
+        + "\n".join([pub_key[i:i + 64] for i in range(0, len(pub_key), 64)])
+        + "\n-----END PUBLIC KEY-----"
+    )
 
-    return ""
+    try:
+        public_key = rsa.PublicKey.load_pkcs1_openssl_pem(pem.encode())
+    except Exception as e:
+        print(f"❌ RSA 公钥加载失败：{e}")
+        print(f"DEBUG pub_key length: {len(pub_key)}")
+        print(f"DEBUG pub_key head: {pub_key[:50]}")
+        raise
+
+    encrypted = rsa.encrypt(str(text).encode("utf-8"), public_key)
+
+    return encrypted.hex()
+
+
+# =========================
+# 账号标准化
+# =========================
+
+def normalize_account(account):
+    account = str(account).strip()
+
+    if re.fullmatch(r"1\d{10}", account):
+        return account, "01", ""
+
+    if "@" in account:
+        name, suffix = account.split("@", 1)
+        return name, "02", "@" + suffix
+
+    return account, "01", ""
+
+
+# =========================
+# 登录逻辑
+# =========================
 
 def login_by_password(username, password):
     print("🔄 正在执行账号密码登录流程...")
 
-    # =========================
-    # 登录前账号环境变量自检
-    # =========================
     print("========== 登录前账号自检 ==========")
     print("username repr:", repr(username))
     print("username len:", len(username) if username is not None else "None")
@@ -722,9 +623,6 @@ def login_by_password(username, password):
             "&redirectURL=https://m.cloud.189.cn/zhuanti/2021/shakeLottery/index.html"
         )
 
-        # =========================
-        # Step 1：请求 m.cloud.189.cn 登录入口
-        # =========================
         html1, resp1 = fetch_login_page(s, url_token, "ty189_step1_udb_login")
 
         if not html1 or not resp1:
@@ -739,12 +637,9 @@ def login_by_password(username, password):
             final_login_html = html1
             final_login_url = resp1.url
         else:
-            # =========================
-            # Step 2：从 Step1 页面提取候选登录 URL
-            # =========================
             candidates = extract_candidate_urls(html1, resp1.url)
-
             print(f"DEBUG Step1 提取候选登录 URL 数量：{len(candidates)}")
+
             for i, u in enumerate(candidates[:10], 1):
                 print(f"DEBUG candidate1-{i}: {u}")
 
@@ -754,7 +649,6 @@ def login_by_password(username, password):
 
             visited = set()
 
-            # 最多尝试前 8 个候选，避免乱跳
             for idx, candidate_url in enumerate(candidates[:8], 1):
                 if candidate_url in visited:
                     continue
@@ -776,12 +670,9 @@ def login_by_password(username, password):
                     final_login_url = resp2.url
                     break
 
-                # =========================
-                # Step 3：如果 Step2 不是最终登录页，继续从 Step2 里找下一层
-                # =========================
                 nested_candidates = extract_candidate_urls(html2, resp2.url)
-
                 print(f"DEBUG candidate {idx} 二级候选数量：{len(nested_candidates)}")
+
                 for j, u in enumerate(nested_candidates[:10], 1):
                     print(f"DEBUG candidate2-{idx}-{j}: {u}")
 
@@ -821,6 +712,7 @@ def login_by_password(username, password):
                 final_path = os.path.join(SCRIPT_DIR, "ty189_final_login_page.html")
                 with open(final_path, "w", encoding="utf-8", errors="ignore") as f:
                     f.write(html)
+
                 print(f"🧩 已保存最终登录页：{final_path}")
                 print(f"DEBUG 最终登录页 URL：{final_login_url}")
             except Exception as e:
@@ -830,144 +722,103 @@ def login_by_password(username, password):
         # 参数提取
         # =========================
 
+        rsa_prefix = "{RSA}"
+
+        # 先全部初始化，避免 UnboundLocalError
+        captcha_token = ""
+        lt = ""
+        param_id = ""
+        return_url = ""
+        j_rsakey = ""
+
         captcha_token = extract_input_value(html, "captchaToken")
         if not captcha_token:
             captcha_token = find_first([
-                r"captchaToken['\"]?\s*[:=]\s*['\"]([^'\"]*)['\"]",
-                r"captchaToken'\s+value='([^']*)'",
-                r'captchaToken"\s+value="([^"]*)"',
+                r'<input[^>]*(?:name|id)=["\']captchaToken["\'][^>]*value=["\']([^"\']*)["\']',
+                r'\bcaptchaToken\b\s*[:=]\s*["\']([^"\']*)["\']',
             ], html, "captchaToken", required=False, default="")
 
         lt = extract_input_value(html, "lt")
         if not lt:
             lt = find_first([
-                r'(?<![A-Za-z0-9_])lt\s*=\s*["\']([^"\']+)["\']',
-                r'["\']lt["\']\s*:\s*["\']([^"\']+)["\']',
+                r'<input[^>]*(?:name|id)=["\']lt["\'][^>]*value=["\']([^"\']+)["\']',
+                r'<input[^>]*value=["\']([^"\']+)["\'][^>]*(?:name|id)=["\']lt["\']',
+                r'\blt\b\s*[:=]\s*["\']([^"\']+)["\']',
             ], html, "lt", required=False, default="")
-
-        if not lt:
-            raise ValueError("登录页参数提取失败：lt")
-
-        try:
-            lt.encode("latin-1")
-        except Exception:
-            print(f"❌ lt 提取异常，当前值不是合法 token：{lt[:50]}")
-            raise ValueError("lt 提取结果异常，可能误匹配到页面中文文本")
-
-        return_url = extract_input_value(html, "returnUrl")
-        if not return_url:
-            return_url = find_first([
-                r"(?<![A-Za-z0-9_])returnUrl\s*=\s*['\"]([^'\"]+)['\"]",
-                r'["\']returnUrl["\']\s*:\s*["\']([^"\']+)["\']',
-            ], html, "returnUrl")
 
         param_id = extract_input_value(html, "paramId")
         if not param_id:
             param_id = find_first([
-                r'(?<![A-Za-z0-9_])paramId\s*=\s*["\']([^"\']+)["\']',
-                r'["\']paramId["\']\s*:\s*["\']([^"\']+)["\']',
-            ], html, "paramId")
+                r'<input[^>]*(?:name|id)=["\']paramId["\'][^>]*value=["\']([^"\']+)["\']',
+                r'\bparamId\b\s*[:=]\s*["\']([^"\']+)["\']',
+            ], html, "paramId", required=True)
 
-        j_rsakey = find_first([
-            r'name=["\']j_rsaKey["\']\s+value=["\']([^"\']+)["\']',
-            r'value=["\']([^"\']+)["\']\s+name=["\']j_rsaKey["\']',
-            r'id=["\']j_rsaKey["\']\s+value=["\']([^"\']+)["\']',
-            r'value=["\']([^"\']+)["\']\s+id=["\']j_rsaKey["\']',
-            r'j_rsaKey["\']?\s*[:=]\s*["\']([^"\']+)["\']',
-            r'pubKey["\']?\s*[:=]\s*["\']([^"\']+)["\']',
-            r'publicKey["\']?\s*[:=]\s*["\']([^"\']+)["\']',
-        ], html, "j_rsaKey", required=False, default="")
+        return_url = extract_input_value(html, "returnUrl")
+        if not return_url:
+            return_url = find_first([
+                r'<input[^>]*(?:name|id)=["\']returnUrl["\'][^>]*value=["\']([^"\']+)["\']',
+                r'\breturnUrl\b\s*[:=]\s*["\']([^"\']+)["\']',
+            ], html, "returnUrl", required=True)
+
+        j_rsakey = extract_input_value(html, "j_rsaKey")
+        if not j_rsakey:
+            j_rsakey = find_first([
+                r'<input[^>]*(?:name|id)=["\']j_rsaKey["\'][^>]*value=["\']([^"\']+)["\']',
+                r'\bj_rsaKey\b\s*[:=]\s*["\']([^"\']+)["\']',
+                r'\bpubKey\b\s*[:=]\s*["\']([^"\']+)["\']',
+                r'\bpublicKey\b\s*[:=]\s*["\']([^"\']+)["\']',
+            ], html, "j_rsaKey", required=False, default="")
 
         j_rsakey = normalize_j_rsakey(j_rsakey)
 
+        # HTML 里没有公钥时，从 encryptConf.do 获取，同时获取 {NRP}
         if not j_rsakey:
             j_rsakey, rsa_prefix = fetch_j_rsakey_from_api(s, final_login_url)
 
         if not j_rsakey:
             raise ValueError("登录页和 encryptConf 接口均未获取到 j_rsaKey")
-        
-       
-        rsa_prefix = rsa_prefix if "rsa_prefix" in locals() else "{RSA}"
+
+        print("✅ 登录页参数提取成功")
+        print(f"DEBUG captchaToken repr: {repr(captcha_token)}")
+        print(f"DEBUG lt repr: {repr(lt)}")
+        print(f"DEBUG paramId repr: {repr(param_id)}")
+        print(f"DEBUG returnUrl repr: {repr(return_url[:80])}")
+        print(f"DEBUG j_rsaKey length: {len(j_rsakey)}")
+        print(f"DEBUG rsa_prefix from config/page: {rsa_prefix}")
+
+        # =========================
+        # 账号标准化 + 加密
+        # =========================
+
+        login_user, account_type, mail_suffix = normalize_account(username)
+
+        print(
+            f"🔎 账号标准化后：accountType={account_type}, "
+            f"mailSuffix='{mail_suffix}', userName={login_user[:3]}..."
+        )
+
+        username_enc = rsa_encode(login_user, j_rsakey)
+        password_enc = rsa_encode(password, j_rsakey)
 
         print(f"DEBUG rsa_prefix: {rsa_prefix}")
         print(f"DEBUG username_enc length: {len(username_enc)}")
         print(f"DEBUG password_enc length: {len(password_enc)}")
         print(f"DEBUG username_enc head: {username_enc[:20]}")
 
-
-
-
-        print("✅ 登录页参数提取成功")
-        print(f"DEBUG captchaToken: {'有' if captcha_token else '空'}")
-        print(f"DEBUG lt: {lt[:20]}...")
-        print(f"DEBUG paramId: {param_id[:20]}...")
-        print(f"DEBUG returnUrl: {return_url[:60]}...")
-        print(f"DEBUG j_rsaKey length: {len(j_rsakey)}")
-
-
         # =========================
-        # 账号标准化 + RSA 加密 + 提交登录
+        # 登录提交
         # =========================
-
-        def normalize_login_account(raw_account):
-            """
-            标准化登录账号：
-            - 手机号：accountType=01, mailSuffix=''
-            - 邮箱：accountType=02, userName=邮箱前缀, mailSuffix=@域名
-            """
-            if raw_account is None:
-                raise ValueError("账号为空")
-
-            account = str(raw_account).strip().replace(" ", "")
-
-            if not account:
-                raise ValueError("账号为空")
-
-            if "*" in account:
-                raise ValueError("当前账号是打码后的值，不能用于登录，请填写完整手机号或邮箱原文")
-
-            # 手机号
-            if re.fullmatch(r"1\d{10}", account):
-                return account, "01", ""
-
-            # 邮箱
-            if "@" in account:
-                local, domain = account.split("@", 1)
-                if not local or not domain:
-                    raise ValueError(f"邮箱格式不合法：{account}")
-                return local, "02", f"@{domain}"
-
-            # 其他情况先按普通账号处理
-            return account, "01", ""
-
-        login_user, account_type, mail_suffix = normalize_login_account(username)
-
-        print(
-            f"🔎 账号标准化后：accountType={account_type}, "
-            f"mailSuffix={mail_suffix!r}, userName={login_user[:3]}..."
-        )
-
-        # 注意：username_enc / password_enc 必须在这里生成
-        username_enc = rsa_encode(login_user, j_rsakey)
-        password_enc = rsa_encode(password, j_rsakey)
 
         submit_url = "https://open.e.189.cn/api/logbox/oauth2/loginSubmit.do"
 
         headers = {
             "User-Agent": get_pc_ua(),
-            "Referer": final_login_url or "https://open.e.189.cn/",
+            "Referer": final_login_url,
             "Origin": "https://open.e.189.cn",
             "Accept": "application/json, text/javascript, */*; q=0.01",
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
             "X-Requested-With": "XMLHttpRequest",
         }
-
-        if lt:
-            try:
-                lt.encode("latin-1")
-                headers["lt"] = lt
-            except Exception:
-                print("⚠️ lt 包含非 latin-1 字符，未写入请求头")
 
         data = {
             "appKey": "cloud",
@@ -981,236 +832,719 @@ def login_by_password(username, password):
             "paramId": param_id,
         }
 
+        if lt:
+            data["lt"] = lt
+
         r = s.post(
             submit_url,
             data=data,
             headers=headers,
-            timeout=15
+            timeout=15,
+            allow_redirects=False
         )
 
         print_response_debug("ty189_login_submit", r)
         dump_debug_response(r, "ty189_login_submit")
 
         login_json = safe_json(r)
+
         if not login_json:
-            print("❌ 登录接口返回非 JSON：")
-            print(r.text[:1000])
+            print("❌ 登录接口未返回 JSON")
+            print(r.text[:500])
             return None
 
         print(f"DEBUG 登录接口 JSON：{json.dumps(login_json, ensure_ascii=False)}")
 
-        if login_json.get("result", 1) != 0:
-            msg = login_json.get("msg", "未知错误")
+        result = login_json.get("result")
+        msg = login_json.get("msg") or login_json.get("message") or ""
+
+        if result not in [0, "0"]:
             print(f"❌ 登录错误：{msg}")
             print(f"📦 登录接口返回：{json.dumps(login_json, ensure_ascii=False)}")
 
-            msg_str = str(msg)
-
-            if "用户名不合法" in msg_str:
-                print("⚠️ 用户名不合法，请重点检查：")
-                print("1. 环境变量里的账号是否是完整手机号，不是 199****3303")
-                print("2. 账号前后是否有空格")
-                print("3. 如果是邮箱账号，请填写完整邮箱，例如 xxx@189.cn")
-
-            if "设备ID不存在" in msg_str or "二次设备校验" in msg_str:
-                print("⚠️ 当前账号触发设备二次校验。")
-                print("👉 建议先用浏览器或天翼云盘 App 手动登录一次该账号，再运行脚本。")
-
-            if "验证码" in msg_str or "validateCode" in msg_str:
-                print("⚠️ 当前账号触发图形验证码，脚本暂不支持自动识别。")
-
-            if "密码" in msg_str:
-                print("⚠️ 请检查账号密码是否正确。")
+            if "用户名不合法" in msg:
+                print("⚠️ 用户名不合法，请检查：")
+                print("1. rsa_prefix 是否为 {NRP}")
+                print("2. username_enc length 是否为 256")
+                print("3. 环境变量账号是否完整手机号")
+                print("4. 如仍失败，可尝试把手机号 mailSuffix 改为 @189.cn")
 
             return None
 
-        to_url = login_json.get("toUrl")
-        if not to_url:
-            print("❌ 登录接口没有返回 toUrl")
-            print(json.dumps(login_json, ensure_ascii=False))
-            return None
+        print("✅ 登录接口返回成功")
 
-        # =========================
-        # 跟随登录成功跳转，拿云盘 Cookie
-        # =========================
-        r = s.get(to_url, timeout=15, allow_redirects=True)
-        print_response_debug("ty189_login_toUrl", r)
-        dump_debug_response(r, "ty189_login_toUrl")
+        to_url = (
+            login_json.get("toUrl")
+            or login_json.get("redirectUrl")
+            or login_json.get("url")
+            or login_json.get("data", {}).get("toUrl")
+            or login_json.get("data", {}).get("redirectUrl")
+        )
 
-        print("✅ 账号密码登录成功")
+        if to_url:
+            print(f"🔁 登录成功，开始跳转：{to_url[:100]}...")
 
-        save_session_cookie(username, s)
+            try:
+                r2 = s.get(
+                    to_url,
+                    headers={
+                        "User-Agent": get_mobile_ua(),
+                        "Referer": final_login_url,
+                    },
+                    timeout=15,
+                    allow_redirects=True
+                )
 
+                print_response_debug("ty189_login_redirect", r2)
+                dump_debug_response(r2, "ty189_login_redirect")
+            except Exception as e:
+                print(f"⚠️ 登录跳转异常：{e}")
+        else:
+            print("⚠️ 登录成功但未找到 toUrl，继续尝试使用当前 Cookie")
+
+        s.headers.update({
+            "User-Agent": get_mobile_ua(),
+            "Referer": "https://m.cloud.189.cn/"
+        })
+
+        if check_login_valid(s):
+            print("✅ 登录态验证成功")
+            save_session_cookie(username, s)
+            return s
+
+        print("⚠️ 登录接口成功，但登录态验证失败")
         return s
 
     except Exception as e:
-        print(f"⚠️ 登录异常：{str(e)}")
+        print(f"⚠️ 登录异常：{e}")
         print("👉 请查看脚本目录下生成的 ty189_step*.html / .meta.txt / ty189_final_login_page.html")
         return None
 
 
-def get_session(username, password):
-    """
-    优先使用本地 Cookie。
-    没有 Cookie 时，使用账号密码登录。
-    """
-    session = load_session_from_cookie(username)
-    if session:
-        return session
+# =========================
+# 登录态检查
+# =========================
 
-    return login_by_password(username, password)
+def check_login_valid(session):
+    urls = [
+        "https://m.cloud.189.cn/v2/getUserBriefInfo.action",
+        "https://cloud.189.cn/api/portal/getUserBriefInfo.action",
+        "https://cloud.189.cn/api/portal/getUserInfo.action",
+    ]
+
+    for idx, url in enumerate(urls, 1):
+        try:
+            r = session.get(
+                url,
+                headers={
+                    "User-Agent": get_mobile_ua(),
+                    "Referer": "https://m.cloud.189.cn/",
+                    "Accept": "application/json, text/plain, */*",
+                },
+                timeout=15
+            )
+
+            print_response_debug(f"ty189_check_login_{idx}", r)
+
+            text = r.text or ""
+            print(f"DEBUG ty189_check_login_{idx} text: {text[:300]}")
+
+            if r.status_code != 200:
+                continue
+
+            data = safe_json(r)
+
+            if data:
+                s = json.dumps(data, ensure_ascii=False)
+
+                # 明确未登录
+                if any(k in s for k in ["未登录", "请登录", "登录超时", "SESSION失效"]):
+                    continue
+
+                # 常见登录成功字段
+                if any(k in s for k in [
+                    "loginName",
+                    "userName",
+                    "nickName",
+                    "userId",
+                    "account",
+                    "phone",
+                    "mobile",
+                    "familyId",
+                    "cloudCapacityInfo",
+                    "usedSize",
+                    "totalSize"
+                ]):
+                    return True
+
+                # 有些接口只返回 result=0 或 code=0
+                if data.get("result") in [0, "0"] or data.get("code") in [0, "0", 200, "200"]:
+                    return True
+
+            else:
+                if any(k in text for k in ["loginName", "userName", "nickName", "userId"]):
+                    return True
+
+        except Exception as e:
+            print(f"⚠️ 登录态检查异常 {idx}：{e}")
+
+    return False
+
+
+def get_session(username, password):
+    session = load_session_from_cookie(username)
+
+    if session:
+        if check_login_valid(session):
+            print("✅ 本地 Cookie 有效，跳过账号密码登录")
+            return session
+
+        print("⚠️ 本地 Cookie 已失效，准备重新登录")
+        delete_saved_cookie(username)
+
+    session = login_by_password(username, password)
+    return session
 
 
 def relogin(username, password):
-    """Cookie 失效后的重新登录"""
-    print("🔁 尝试重新账号密码登录...")
     delete_saved_cookie(username)
     return login_by_password(username, password)
+
+# =========================
+# 天翼云盘 API 签名
+# =========================
+
+def get_cookie_value(session, possible_names):
+    """
+    从 session.cookies 里按多个可能名称查找 cookie。
+    """
+    jar = session.cookies
+
+    # 先精确匹配
+    for name in possible_names:
+        v = jar.get(name)
+        if v:
+            return v
+
+    # 再忽略大小写匹配
+    lower_map = {}
+    for c in jar:
+        lower_map[c.name.lower()] = c.value
+
+    for name in possible_names:
+        v = lower_map.get(name.lower())
+        if v:
+            return v
+
+    return ""
+
+
+def recursive_find_key(obj, target_names):
+    """
+    递归从 dict/list 里查找指定字段名。
+    """
+    if obj is None:
+        return ""
+
+    target_lower = [x.lower() for x in target_names]
+
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if str(k).lower() in target_lower and v:
+                return str(v)
+
+        for v in obj.values():
+            found = recursive_find_key(v, target_names)
+            if found:
+                return found
+
+    elif isinstance(obj, list):
+        for item in obj:
+            found = recursive_find_key(item, target_names)
+            if found:
+                return found
+
+    return ""
+
+
+def try_fetch_app_session_from_api(session):
+    """
+    H5 登录后，尝试通过若干接口换取 App API 所需的 SessionKey / SessionSecret。
+
+    注意：
+    - 有些账号/地区/登录入口可能不给 SessionSecret；
+    - 如果拿不到，就说明必须切 App 登录流程。
+    """
+    candidates = [
+        {
+            "name": "getUserBriefInfo",
+            "url": "https://m.cloud.189.cn/v2/getUserBriefInfo.action",
+            "params": {},
+            "referer": "https://m.cloud.189.cn/",
+        },
+        {
+            "name": "userBriefInfo_web",
+            "url": "https://cloud.189.cn/api/portal/getUserBriefInfo.action",
+            "params": {},
+            "referer": "https://cloud.189.cn/",
+        },
+        {
+            "name": "getUserInfo_web",
+            "url": "https://cloud.189.cn/api/portal/getUserInfo.action",
+            "params": {},
+            "referer": "https://cloud.189.cn/",
+        },
+        {
+            "name": "getSessionForPC",
+            "url": "https://api.cloud.189.cn/getSessionForPC.action",
+            "params": {
+                "clientType": "TELEANDROID",
+                "version": "8.6.3",
+                "model": "SM-G9730",
+            },
+            "referer": "https://m.cloud.189.cn/",
+        },
+        {
+            "name": "getSessionForPC_m",
+            "url": "https://m.cloud.189.cn/v2/getSessionForPC.action",
+            "params": {
+                "clientType": "TELEANDROID",
+                "version": "8.6.3",
+                "model": "SM-G9730",
+            },
+            "referer": "https://m.cloud.189.cn/",
+        },
+    ]
+
+    headers_base = {
+        "User-Agent": get_mobile_ua(),
+        "Accept": "application/json, text/plain, */*",
+    }
+
+    for item in candidates:
+        try:
+            headers = dict(headers_base)
+            headers["Referer"] = item["referer"]
+
+            r = session.get(
+                item["url"],
+                params=item["params"],
+                headers=headers,
+                timeout=15
+            )
+
+            print_response_debug(f"ty189_fetch_app_session_{item['name']}", r)
+
+            try:
+                print(f"DEBUG {item['name']} text: {r.text[:500]}")
+            except Exception:
+                pass
+
+            data = safe_json(r)
+            if not data:
+                continue
+
+            session_key = recursive_find_key(data, [
+                "SessionKey",
+                "sessionKey",
+                "session_key",
+                "sessionkey",
+            ])
+
+            session_secret = recursive_find_key(data, [
+                "SessionSecret",
+                "sessionSecret",
+                "session_secret",
+                "sessionsecret",
+            ])
+
+            access_token = recursive_find_key(data, [
+                "accessToken",
+                "access_token",
+                "AccessToken",
+                "token",
+            ])
+
+            print(
+                f"DEBUG {item['name']} 提取结果："
+                f"session_key={bool(session_key)}, "
+                f"session_secret={bool(session_secret)}, "
+                f"access_token={bool(access_token)}"
+            )
+
+            if session_key and session_secret:
+                print(f"✅ 已通过 {item['name']} 获取 SessionKey/SessionSecret")
+
+                # 写入 cookie，后面 build_cloud189_api_headers 可以直接读取
+                session.cookies.set("SessionKey", session_key, domain=".cloud.189.cn", path="/")
+                session.cookies.set("SessionSecret", session_secret, domain=".cloud.189.cn", path="/")
+
+                return session_key, session_secret
+
+        except Exception as e:
+            print(f"⚠️ 尝试 {item['name']} 获取 App 凭证异常：{e}")
+
+    return "", ""
+
+
+def extract_session_key_secret(session):
+    """
+    尝试从 Cookie 或接口中提取 SessionKey / SessionSecret。
+    """
+    session_key_names = [
+        "SessionKey",
+        "sessionKey",
+        "SESSIONKEY",
+        "SESSION_KEY",
+        "session_key",
+        "cloud189_session_key",
+        "CLOUD189_SESSION_KEY",
+    ]
+
+    session_secret_names = [
+        "SessionSecret",
+        "sessionSecret",
+        "SESSIONSECRET",
+        "SESSION_SECRET",
+        "session_secret",
+        "cloud189_session_secret",
+        "CLOUD189_SESSION_SECRET",
+    ]
+
+    session_key = get_cookie_value(session, session_key_names)
+    session_secret = get_cookie_value(session, session_secret_names)
+
+    try:
+        cookie_names = [c.name for c in session.cookies]
+        print(f"DEBUG 当前 Cookie 名称列表：{cookie_names}")
+    except Exception:
+        pass
+
+    if session_key:
+        print(f"✅ 已从 Cookie 找到 SessionKey，长度：{len(session_key)}")
+    else:
+        print("⚠️ 未在 Cookie 中找到 SessionKey")
+
+    if session_secret:
+        print(f"✅ 已从 Cookie 找到 SessionSecret，长度：{len(session_secret)}")
+    else:
+        print("⚠️ 未在 Cookie 中找到 SessionSecret")
+
+    # Cookie 里没有，就尝试用 H5 登录态换取
+    if not session_key or not session_secret:
+        print("🔁 尝试通过网页登录态换取 App API SessionKey/SessionSecret...")
+        session_key, session_secret = try_fetch_app_session_from_api(session)
+
+    if session_key:
+        print(f"✅ 最终 SessionKey 长度：{len(session_key)}")
+    else:
+        print("❌ 最终仍未获取到 SessionKey")
+
+    if session_secret:
+        print(f"✅ 最终 SessionSecret 长度：{len(session_secret)}")
+    else:
+        print("❌ 最终仍未获取到 SessionSecret")
+
+    return session_key, session_secret
+
+
+def make_cloud189_signature(method, url, session_key, session_secret, date_str):
+    """
+    生成天翼云盘 API 签名。
+
+    常见签名原文格式：
+    SessionKey={SessionKey}&Operate={METHOD}&RequestURI={PATH}&Date={DATE}
+    """
+    method = method.upper()
+    parsed = urlparse(url)
+
+    request_uri = parsed.path
+    if not request_uri.startswith("/"):
+        request_uri = "/" + request_uri
+
+    sign_text = (
+        f"SessionKey={session_key}"
+        f"&Operate={method}"
+        f"&RequestURI={request_uri}"
+        f"&Date={date_str}"
+    )
+
+    digest = hmac.new(
+        session_secret.encode("utf-8"),
+        sign_text.encode("utf-8"),
+        hashlib.sha1
+    ).digest()
+
+    signature = base64.b64encode(digest).decode("utf-8")
+
+    print(f"DEBUG signature raw: {sign_text}")
+    print(f"DEBUG signature len: {len(signature)}")
+
+    return signature
+
+
+def build_cloud189_api_headers(session, url, method="GET", referer="https://m.cloud.189.cn/"):
+    """
+    构造带 Date / SessionKey / Signature 的请求头。
+    """
+    session_key, session_secret = extract_session_key_secret(session)
+
+    if not session_key or not session_secret:
+        raise ValueError(
+            "网页登录成功，但没有拿到 App API 所需的 SessionKey/SessionSecret。"
+            "当前账号/入口可能不支持直接从 H5 Cookie 换取签到签名凭证，"
+            "需要改成 App 登录流程或寻找新的 H5 签到接口。"
+        )
+
+    date_str = formatdate(timeval=None, localtime=False, usegmt=True)
+
+    signature = make_cloud189_signature(
+        method=method,
+        url=url,
+        session_key=session_key,
+        session_secret=session_secret,
+        date_str=date_str
+    )
+
+    headers = {
+        "User-Agent": get_mobile_ua(),
+        "Referer": referer,
+        "Accept": "application/json;charset=UTF-8",
+        "Date": date_str,
+        "SessionKey": session_key,
+        "Signature": signature,
+    }
+
+    print(f"DEBUG API Date: {date_str}")
+    print(f"DEBUG API has SessionKey: {bool(session_key)}")
+    print(f"DEBUG API has Signature: {bool(signature)}")
+
+    return headers
 
 
 # =========================
 # 签到与抽奖
 # =========================
 
-def is_login_invalid_response(resp):
-    """
-    判断是否 Cookie 失效。
-    主要表现：
-    1. 返回非 JSON
-    2. 返回 HTML 登录页
-    3. 返回特定错误码
-    """
-    if resp is None:
-        return True
-
-    if isinstance(resp, dict):
-        text = json.dumps(resp, ensure_ascii=False)
-        invalid_keywords = [
-            "未登录",
-            "登录",
-            "Session",
-            "session",
-            "AccessToken",
-            "无效",
-            "过期"
-        ]
-        return any(k in text for k in invalid_keywords)
-
-    return False
-
-
 def do_sign_and_lottery(session):
-    """
-    返回：
-    {
-        "ok": True/False,
-        "cookie_invalid": True/False,
-        "sign": "...",
-        "lottery": "..."
-    }
-    """
-
     result = {
-        "ok": False,
-        "cookie_invalid": False,
         "sign": "",
-        "lottery": ""
-    }
-
-    headers = {
-        "User-Agent": get_mobile_ua(),
-        "Referer": "https://m.cloud.189.cn/zhuanti/2016/sign/index.jsp?albumBackupOpened=1",
-        "Host": "m.cloud.189.cn",
+        "lottery": "",
+        "cookie_invalid": False
     }
 
     try:
-        # 每日签到
-        rand = str(round(time.time() * 1000))
+        rand = str(random.random())
+
         sign_url = (
-            f"https://api.cloud.189.cn/mkt/userSign.action?"
+            "https://api.cloud.189.cn/mkt/userSign.action?"
             f"rand={rand}&clientType=TELEANDROID&version=8.6.3&model=SM-G9730"
         )
 
-        resp = session.get(sign_url, headers=headers, timeout=15)
-
-        sign_json = safe_json(resp)
-        if not sign_json:
-            text = resp.text[:300] if resp is not None else ""
-            print(f"⚠️ 签到接口返回非 JSON，可能 Cookie 失效：{text}")
-            result["cookie_invalid"] = True
-            result["sign"] = "❌ Cookie失效"
+        try:
+            headers = build_cloud189_api_headers(
+                session=session,
+                url=sign_url,
+                method="GET",
+                referer="https://m.cloud.189.cn/"
+            )
+        except Exception as e:
+            result["sign"] = f"❌ 签到签名生成失败：{e}"
+            result["lottery"] = "-"
             return result
 
-        if is_login_invalid_response(sign_json):
-            print(f"⚠️ 签到接口疑似登录失效：{json.dumps(sign_json, ensure_ascii=False)}")
-            result["cookie_invalid"] = True
-            result["sign"] = "❌ Cookie失效"
-            return result
+        print(f"DEBUG sign request headers keys: {list(headers.keys())}")
 
-        if sign_json.get("isSign") == "false":
-            result["sign"] = f"✅ +{sign_json.get('netdiskBonus', 0)}M"
+        r = session.get(sign_url, headers=headers, timeout=15)
+        print_response_debug("ty189_sign", r)
+
+        try:
+            print(f"DEBUG ty189_sign text: {r.text[:300]}")
+        except Exception:
+            pass
+
+        data = safe_json(r)
+
+        if not data:
+            text = r.text or ""
+
+            if "login" in text.lower() or "未登录" in text:
+                result["cookie_invalid"] = True
+                result["sign"] = "❌ Cookie 失效"
+                result["lottery"] = "-"
+                return result
+
+            result["sign"] = f"❌ 签到返回异常：{text[:80]}"
         else:
-            result["sign"] = f"⏳ 已签到+{sign_json.get('netdiskBonus', 0)}M"
+            s = json.dumps(data, ensure_ascii=False)
+            print(f"DEBUG 签到 JSON：{s}")
 
-        # 单次抽奖
-        time.sleep(random.randint(2, 5))
+            if any(k in s for k in ["未登录", "登录", "SESSION", "cookie", "Cookie"]):
+                result["cookie_invalid"] = True
+                result["sign"] = "❌ Cookie 失效"
+                result["lottery"] = "-"
+                return result
 
-        lottery_url = (
-            "https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?"
-            "taskId=TASK_SIGNIN&activityId=ACT_SIGNIN"
-        )
+            # 常见成功字段兼容
+            if data.get("isSign") == "false" or data.get("isSign") is False:
+                result["sign"] = "✅ 签到成功"
+            elif data.get("isSign") == "true" or data.get("isSign") is True:
+                result["sign"] = "✅ 今日已签到"
+            elif data.get("errorCode") in ["User_Not_Chance", "Already_Signed"]:
+                result["sign"] = "✅ 今日已签到"
+            else:
+                netdisk_bonus = (
+                    data.get("netdiskBonus")
+                    or data.get("bonus")
+                    or data.get("data", {}).get("netdiskBonus")
+                    or data.get("data", {}).get("bonus")
+                )
 
-        resp = session.get(lottery_url, headers=headers, timeout=15)
-        lottery_json = safe_json(resp)
+                if netdisk_bonus:
+                    result["sign"] = f"✅ 签到成功，获得 {netdisk_bonus}M 空间"
+                else:
+                    msg = (
+                        data.get("errorMsg")
+                        or data.get("msg")
+                        or data.get("message")
+                        or data.get("data", {}).get("msg")
+                        or data.get("data", {}).get("message")
+                        or s
+                    )
 
-        if not lottery_json:
-            result["lottery"] = "⚠️ 抽奖返回非JSON"
-        elif "errorCode" in lottery_json:
-            error_msg = lottery_json.get("errorMsg") or lottery_json.get("errorCode")
-            result["lottery"] = f"❌ {error_msg}"
-        else:
-            prize = lottery_json.get("prizeName") or lottery_json.get("description") or "未中奖"
-            result["lottery"] = f"🎁 {prize}"
+                    # 如果接口仍然提示 date/signature，则直接说明签名没带上或凭证不对
+                    if "date/signature" in str(msg):
+                        result["sign"] = f"❌ 签到失败：接口要求 Date/Signature，当前签名无效或缺少凭证"
+                    else:
+                        result["sign"] = f"✅ 签到结果：{str(msg)[:80]}"
 
-        result["ok"] = True
+        # 每日抽奖
+        lottery_result = daily_lottery(session)
+        result["lottery"] = lottery_result
+
         return result
 
     except Exception as e:
-        result["sign"] = "❌ 操作异常"
-        result["lottery"] = f"⚠️ {str(e)}"
+        result["sign"] = f"❌ 签到异常：{e}"
+        result["lottery"] = "-"
         return result
+
+
+def daily_lottery(session):
+    """
+    天翼云盘每日抽奖。
+    带 Date / SessionKey / Signature 签名头。
+    """
+    urls = [
+        "https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_SIGNIN",
+        "https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_SIGNIN_PHOTOS",
+        "https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_2022_FLDFS_KJ",
+    ]
+
+    final_msgs = []
+
+    for idx, url in enumerate(urls, 1):
+        try:
+            try:
+                headers = build_cloud189_api_headers(
+                    session=session,
+                    url=url,
+                    method="GET",
+                    referer="https://m.cloud.189.cn/zhuanti/2021/shakeLottery/index.html"
+                )
+            except Exception as e:
+                return f"❌ 抽奖签名生成失败：{e}"
+
+            r = session.get(url, headers=headers, timeout=15)
+            print_response_debug(f"ty189_lottery_{idx}", r)
+
+            try:
+                print(f"DEBUG ty189_lottery_{idx} text: {r.text[:300]}")
+            except Exception:
+                pass
+
+            data = safe_json(r)
+
+            if not data:
+                text = (r.text or "").strip()
+                if text:
+                    final_msgs.append(text[:80])
+                continue
+
+            s = json.dumps(data, ensure_ascii=False)
+            print(f"DEBUG 抽奖 JSON {idx}：{s}")
+
+            if any(k in s for k in ["未登录", "登录", "SESSION", "cookie", "Cookie"]):
+                return "❌ 抽奖失败：Cookie 失效"
+
+            prize_name = (
+                data.get("prizeName")
+                or data.get("awardName")
+                or data.get("name")
+                or data.get("data", {}).get("prizeName")
+                or data.get("data", {}).get("awardName")
+                or data.get("data", {}).get("name")
+            )
+
+            error_msg = (
+                data.get("errorMsg")
+                or data.get("msg")
+                or data.get("message")
+                or data.get("data", {}).get("msg")
+                or data.get("data", {}).get("message")
+            )
+
+            if prize_name:
+                return f"🎉 抽奖获得：{prize_name}"
+
+            if error_msg:
+                if any(k in str(error_msg) for k in ["没有抽奖机会", "已抽", "次数不足", "机会用完"]):
+                    return f"✅ {error_msg}"
+
+                final_msgs.append(str(error_msg))
+                continue
+
+            final_msgs.append(s[:100])
+
+        except Exception as e:
+            final_msgs.append(f"接口{idx}异常：{e}")
+
+    if final_msgs:
+        return "⚠️ 抽奖结果：" + " | ".join(final_msgs[:2])
+
+    return "⚠️ 抽奖无返回"
 
 
 # =========================
 # 推送
 # =========================
 
-def send_wxpusher(msg):
+def send_wxpusher(content):
     if not WXPUSHER_APP_TOKEN or not WXPUSHER_UIDS:
         print("⚠️ 未配置WxPusher，跳过消息推送")
         return
 
     url = "https://wxpusher.zjiecode.com/api/send/message"
-    headers = {"Content-Type": "application/json"}
 
     for uid in WXPUSHER_UIDS:
+        uid = uid.strip()
         if not uid:
             continue
 
-        data = {
+        payload = {
             "appToken": WXPUSHER_APP_TOKEN,
-            "content": msg,
+            "content": content,
+            "summary": "天翼云盘签到通知",
             "contentType": 3,
-            "topicIds": [],
-            "uids": [uid],
+            "uids": [uid]
         }
 
         try:
-            resp = requests.post(url, json=data, headers=headers, timeout=10)
-            resp_json = safe_json(resp)
+            resp = requests.post(url, json=payload, timeout=15)
+            data = safe_json(resp)
 
-            if resp_json and resp_json.get("code") == 1000:
-                print(f"✅ 消息推送成功 -> UID: {uid}")
+            if data and data.get("code") == 1000:
+                print(f"✅ 消息推送成功 UID: {uid}")
             else:
                 print(f"❌ 消息推送失败：{resp.text}")
         except Exception as e:
@@ -1247,11 +1581,10 @@ def main():
             all_results.append(account_result)
             continue
 
-        # 第一次尝试：优先 Cookie 或刚登录的 session
         sign_result = do_sign_and_lottery(session)
 
-        # 如果 Cookie 失效，则账号密码重新登录并重试一次
         if sign_result.get("cookie_invalid"):
+            print("🔁 Cookie 失效，尝试重新账号密码登录后重试签到")
             session = relogin(username, password)
 
             if session:
