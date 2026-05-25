@@ -39,19 +39,70 @@ from requests.utils import dict_from_cookiejar, cookiejar_from_dict
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 COOKIE_STORE_FILE = os.path.join(SCRIPT_DIR, "ty189_cookie_store.json")
 
-ty_usernames = os.getenv("ty_username").split("&") if os.getenv("ty_username") else []
-ty_passwords = os.getenv("ty_password").split("&") if os.getenv("ty_password") else []
+# =========================
+# 凭证配置
+# =========================
 
-if not ty_usernames or not ty_passwords:
-    raise ValueError("❌ 请设置环境变量 ty_username 和 ty_password")
+ty_usernames = os.getenv("ty_username", "").split("&") if os.getenv("ty_username") else []
+ty_passwords = os.getenv("ty_password", "").split("&") if os.getenv("ty_password") else []
 
-accounts = [
-    {
-        "username": u.strip(),
-        "password": p.strip()
-    }
-    for u, p in zip(ty_usernames, ty_passwords)
-]
+# 新增：直接使用 App sessionKey#sessionSecret
+# 单账号：
+# TY189_APP_SESSION=sessionKey#sessionSecret
+# 多账号：
+# TY189_APP_SESSION=sessionKey1#sessionSecret1&sessionKey2#sessionSecret2
+TY189_APP_SESSIONS = (
+    os.getenv("TY189_APP_SESSION", "").split("&")
+    if os.getenv("TY189_APP_SESSION")
+    else []
+)
+
+# 新增：签名模式
+# 推荐先用 hex_hmac_sha1，因为你抓包里的 signature 是 40 位 hex
+# 可选：
+# hex_hmac_sha1
+# b64_hmac_sha1
+# sha1_concat
+TY189_SIGN_MODE = os.getenv("TY189_SIGN_MODE", "hex_hmac_sha1").strip()
+
+# 新增：Android 版本配置，按你的真实抓包
+TY189_CLIENT_TYPE = os.getenv("TY189_CLIENT_TYPE", "TELEANDROID")
+TY189_VERSION = os.getenv("TY189_VERSION", "11.0.2")
+TY189_MODEL = os.getenv("TY189_MODEL", "Mi10Pro")
+TY189_APP_ID = os.getenv("TY189_APP_ID", "30217")
+TY189_ANDROID_UA = os.getenv(
+    "TY189_ANDROID_UA",
+    "Ecloud/11.0.2 (Mi 10 Pro; ; xiaomi) Android/33"
+)
+
+# 允许只配置 TY189_APP_SESSION，不再强制 ty_username/ty_password
+if not TY189_APP_SESSIONS and (not ty_usernames or not ty_passwords):
+    raise ValueError(
+        "❌ 请至少设置一种凭证：\n"
+        "1. TY189_APP_SESSION=sessionKey#sessionSecret\n"
+        "或\n"
+        "2. ty_username + ty_password"
+    )
+
+accounts = []
+
+# 如果配置了账号密码，按账号密码建账号
+if ty_usernames and ty_passwords:
+    for idx, (u, p) in enumerate(zip(ty_usernames, ty_passwords)):
+        accounts.append({
+            "username": u.strip(),
+            "password": p.strip(),
+            "app_session": TY189_APP_SESSIONS[idx].strip() if idx < len(TY189_APP_SESSIONS) else ""
+        })
+
+# 如果只配置 TY189_APP_SESSION，没有账号密码，也可以跑
+elif TY189_APP_SESSIONS:
+    for idx, raw_session in enumerate(TY189_APP_SESSIONS):
+        accounts.append({
+            "username": f"APP_SESSION_{idx + 1}",
+            "password": "",
+            "app_session": raw_session.strip()
+        })
 
 WXPUSHER_APP_TOKEN = os.getenv("WXPUSHER_APP_TOKEN")
 WXPUSHER_UIDS = os.getenv("WXPUSHER_UID", "").split("&") if os.getenv("WXPUSHER_UID") else []
@@ -82,14 +133,7 @@ def get_pc_ua():
 
 
 def get_mobile_ua():
-    return (
-        "Mozilla/5.0 (Linux; Android 10; SM-G9730 Build/QP1A.190711.020; wv) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 "
-        "Chrome/90.0.4430.91 Mobile Safari/537.36 "
-        "Ecloud/8.6.3 Android/29 clientId/355325117317828 "
-        "clientModel/SM-G9730 imsi/460071114317824 "
-        "clientChannelId/qq proVersion/1.0.6"
-    )
+    return TY189_ANDROID_UA
 
 
 def safe_json(resp):
@@ -153,6 +197,68 @@ def dump_debug_response(resp, filename_prefix):
 
     except Exception as e:
         print(f"⚠️ 保存调试响应失败：{e}")
+
+
+def parse_app_session(raw):
+    """
+    解析 TY189_APP_SESSION。
+
+    支持格式：
+    sessionKey#sessionSecret
+    sessionKey|sessionSecret
+    sessionKey,sessionSecret
+    """
+
+    raw = (raw or "").strip()
+    if not raw:
+        return "", ""
+
+    for sep in ["#", "|", ","]:
+        if sep in raw:
+            session_key, session_secret = raw.split(sep, 1)
+            return session_key.strip(), session_secret.strip()
+
+    return "", ""
+
+
+def mask_token(value):
+    if not value:
+        return ""
+    value = str(value)
+    if len(value) <= 8:
+        return value[:2] + "***"
+    return value[:4] + "***" + value[-4:]
+
+
+def make_session_from_app_session(raw_app_session):
+    """
+    使用 TY189_APP_SESSION 构造一个 requests.Session。
+    这样后面的 do_sign_and_lottery(session) 可以继续复用。
+    """
+
+    session_key, session_secret = parse_app_session(raw_app_session)
+
+    if not session_key or not session_secret:
+        raise ValueError(
+            "TY189_APP_SESSION 格式错误，应为：sessionKey#sessionSecret"
+        )
+
+    s = requests.Session()
+
+    s.headers.update({
+        "User-Agent": get_mobile_ua(),
+        "Referer": "https://m.cloud.189.cn/",
+    })
+
+    # 写入 Cookie，复用原脚本 extract_session_key_secret 的读取逻辑
+    s.cookies.set("SessionKey", session_key, domain=".cloud.189.cn", path="/")
+    s.cookies.set("SessionSecret", session_secret, domain=".cloud.189.cn", path="/")
+
+    print("✅ 已使用 TY189_APP_SESSION 构造 App 登录态")
+    print(f"DEBUG SessionKey: {mask_token(session_key)}")
+    print(f"DEBUG SessionSecret: {mask_token(session_secret)}")
+
+    return s
 
 
 # =========================
@@ -1098,9 +1204,9 @@ def try_fetch_app_session_from_api(session):
             "name": "getSessionForPC",
             "url": "https://api.cloud.189.cn/getSessionForPC.action",
             "params": {
-                "clientType": "TELEANDROID",
-                "version": "8.6.3",
-                "model": "SM-G9730",
+                "clientType": TY189_CLIENT_TYPE,
+                "version": TY189_VERSION,
+                "model": TY189_MODEL,
             },
             "referer": "https://m.cloud.189.cn/",
         },
@@ -1108,9 +1214,9 @@ def try_fetch_app_session_from_api(session):
             "name": "getSessionForPC_m",
             "url": "https://m.cloud.189.cn/v2/getSessionForPC.action",
             "params": {
-                "clientType": "TELEANDROID",
-                "version": "8.6.3",
-                "model": "SM-G9730",
+                "clientType": TY189_CLIENT_TYPE,
+                "version": TY189_VERSION,
+                "model": TY189_MODEL,
             },
             "referer": "https://m.cloud.189.cn/",
         },
@@ -1252,9 +1358,17 @@ def make_cloud189_signature(method, url, session_key, session_secret, date_str):
     """
     生成天翼云盘 API 签名。
 
-    常见签名原文格式：
-    SessionKey={SessionKey}&Operate={METHOD}&RequestURI={PATH}&Date={DATE}
+    你抓包里的 signature 示例：
+    ab74f491d924a31d76bfeaee25adb407989547d6
+
+    这是 40 位 hex，更像 HMAC-SHA1 hex 或 SHA1 hex，
+    所以这里支持多种模式：
+
+    TY189_SIGN_MODE=hex_hmac_sha1  默认，HMAC-SHA1 后 hex
+    TY189_SIGN_MODE=b64_hmac_sha1  原脚本逻辑，HMAC-SHA1 后 base64
+    TY189_SIGN_MODE=sha1_concat    SHA1(sign_text + sessionSecret)
     """
+
     method = method.upper()
     parsed = urlparse(url)
 
@@ -1269,15 +1383,32 @@ def make_cloud189_signature(method, url, session_key, session_secret, date_str):
         f"&Date={date_str}"
     )
 
-    digest = hmac.new(
-        session_secret.encode("utf-8"),
-        sign_text.encode("utf-8"),
-        hashlib.sha1
-    ).digest()
+    mode = TY189_SIGN_MODE
 
-    signature = base64.b64encode(digest).decode("utf-8")
+    if mode == "b64_hmac_sha1":
+        digest = hmac.new(
+            session_secret.encode("utf-8"),
+            sign_text.encode("utf-8"),
+            hashlib.sha1
+        ).digest()
+        signature = base64.b64encode(digest).decode("utf-8")
 
+    elif mode == "sha1_concat":
+        signature = hashlib.sha1(
+            (sign_text + session_secret).encode("utf-8")
+        ).hexdigest()
+
+    else:
+        # 默认：hex_hmac_sha1
+        signature = hmac.new(
+            session_secret.encode("utf-8"),
+            sign_text.encode("utf-8"),
+            hashlib.sha1
+        ).hexdigest()
+
+    print(f"DEBUG signature mode: {mode}")
     print(f"DEBUG signature raw: {sign_text}")
+    print(f"DEBUG signature: {signature}")
     print(f"DEBUG signature len: {len(signature)}")
 
     return signature
@@ -1287,13 +1418,13 @@ def build_cloud189_api_headers(session, url, method="GET", referer="https://m.cl
     """
     构造带 Date / SessionKey / Signature 的请求头。
     """
+
     session_key, session_secret = extract_session_key_secret(session)
 
     if not session_key or not session_secret:
         raise ValueError(
-            "网页登录成功，但没有拿到 App API 所需的 SessionKey/SessionSecret。"
-            "当前账号/入口可能不支持直接从 H5 Cookie 换取签到签名凭证，"
-            "需要改成 App 登录流程或寻找新的 H5 签到接口。"
+            "没有拿到 App API 所需的 SessionKey/SessionSecret。"
+            "请配置 TY189_APP_SESSION=sessionKey#sessionSecret。"
         )
 
     date_str = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -1307,12 +1438,13 @@ def build_cloud189_api_headers(session, url, method="GET", referer="https://m.cl
     )
 
     headers = {
-        "User-Agent": get_mobile_ua(),
-        "Referer": referer,
-        "Accept": "application/json;charset=UTF-8",
-        "Date": date_str,
-        "SessionKey": session_key,
-        "Signature": signature,
+        "user-agent": get_mobile_ua(),
+        "referer": referer,
+        "accept": "application/json;charset=UTF-8",
+        "date": date_str,
+        "sessionkey": session_key,
+        "signature": signature,
+        "content-type": "text/xml; charset=utf-8",
     }
 
     print(f"DEBUG API Date: {date_str}")
@@ -1338,7 +1470,10 @@ def do_sign_and_lottery(session):
 
         sign_url = (
             "https://api.cloud.189.cn/mkt/userSign.action?"
-            f"rand={rand}&clientType=TELEANDROID&version=8.6.3&model=SM-G9730"
+            f"rand={rand}"
+            f"&clientType={TY189_CLIENT_TYPE}"
+            f"&version={TY189_VERSION}"
+            f"&model={TY189_MODEL}"
         )
 
         try:
@@ -1558,12 +1693,17 @@ def send_wxpusher(content):
 def main():
     print("\n=============== 天翼云盘签到开始 ===============")
 
+    print(f"DEBUG TY189_VERSION: {TY189_VERSION}")
+    print(f"DEBUG TY189_MODEL: {TY189_MODEL}")
+    print(f"DEBUG TY189_SIGN_MODE: {TY189_SIGN_MODE}")
+    print(f"DEBUG TY189_APP_SESSION count: {len(TY189_APP_SESSIONS)}")
+
     all_results = []
 
     for idx, acc in enumerate(accounts):
         username = acc["username"]
-        password = acc["password"]
-        masked_phone = mask_phone(username)
+        password = acc.get("password", "")
+        masked_phone = mask_phone(username) if not username.startswith("APP_SESSION_") else username
 
         account_result = {
             "username": masked_phone,
@@ -1573,7 +1713,17 @@ def main():
 
         print(f"\n🔔 处理账号：{masked_phone}")
 
-        session = get_session(username, password)
+        # 优先使用 TY189_APP_SESSION
+        if acc.get("app_session"):
+            try:
+                session = make_session_from_app_session(acc.get("app_session"))
+            except Exception as e:
+                account_result["sign"] = f"❌ App Session 解析失败：{e}"
+                account_result["lottery"] = "-"
+                all_results.append(account_result)
+                continue
+        else:
+            session = get_session(username, password)
 
         if not session:
             account_result["sign"] = "❌ 登录失败"
@@ -1584,16 +1734,23 @@ def main():
         sign_result = do_sign_and_lottery(session)
 
         if sign_result.get("cookie_invalid"):
-            print("🔁 Cookie 失效，尝试重新账号密码登录后重试签到")
-            session = relogin(username, password)
-
-            if session:
-                sign_result = do_sign_and_lottery(session)
-            else:
+            if acc.get("app_session"):
+                print("⚠️ 当前使用的是 TY189_APP_SESSION，无法自动重登，请更新 sessionKey/sessionSecret")
                 sign_result = {
-                    "sign": "❌ 重新登录失败",
+                    "sign": "❌ App Session 失效，请重新抓取 sessionKey/sessionSecret",
                     "lottery": "-"
                 }
+            else:
+                print("🔁 Cookie 失效，尝试重新账号密码登录后重试签到")
+                session = relogin(username, password)
+
+                if session:
+                    sign_result = do_sign_and_lottery(session)
+                else:
+                    sign_result = {
+                        "sign": "❌ 重新登录失败",
+                        "lottery": "-"
+                    }
 
         account_result["sign"] = sign_result.get("sign", "")
         account_result["lottery"] = sign_result.get("lottery", "")
