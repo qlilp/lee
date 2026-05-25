@@ -1,129 +1,112 @@
 /**
  * 变量名：CLOUD_189
- * 值：手机号#密码，多账号，直接换行或者重新弄一个变量，格式一样。 
- *  需要安装的依赖 cloud189-sdk
- * 定时规则
- * 每天早上8点，跟晚上8点签到。
+ * 值：手机号#密码
+ * 多账号：一行一个，例如：
+ * 199xxxx3303#密码1
+ * 189xxxx6964#密码2
+ *
+ * 依赖：
+ * cloud189-sdk
+ *
+ * 定时规则：
+ * 每天早上8点、晚上8点签到
  * cron: 0 0 8,20 * * *
  */
+
 const { CloudClient } = require("cloud189-sdk");
-const fs = require('fs'); // 引入文件系统模块，用于写入日志
 
-const mask = (s, start, end) => s.split("").fill("*", start, end).join("");
-
-const buildTaskResult = (res, result) => {
-  const index = result.length;
-  if (res.errorCode === "User_Not_Chance") {
-    result.push(`第${index}次抽奖失败,次数不足`);
-  } else {
-    result.push(`第${index}次抽奖成功,抽奖获得${res.prizeName}`);
-  }
+// 手机号脱敏
+const mask = (s, start, end) => {
+  if (!s) return "";
+  return s.split("").fill("*", start, end).join("");
 };
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const message = [];
-// 任务 1.签到 2.天天抽红包 3.自动备份抽红包
-const doTask = async (cloudClient) => {
-  const result = [];
-  const res1 = await cloudClient.userSign();
-  result.push(
-    `${res1.isSign? "已经签到过了，" : ""}签到获得${res1.netdiskBonus}M空间`
-  );
-  await delay(5000); // 延迟5秒
+// 个人签到
+const doSignTask = async (cloudClient) => {
+  const res = await cloudClient.userSign();
 
-  const res2 = await cloudClient.taskSign();
-  buildTaskResult(res2, result);
-
-  await delay(5000); // 延迟5秒
-  const res3 = await cloudClient.taskPhoto();
-  buildTaskResult(res3, result);
-
-  await delay(5000); // 延迟5秒
-  const res4 = await cloudClient.taskKJ();
-  buildTaskResult(res4, result);
-  return result;
+  return `${res.isSign ? "已经签到过了，" : ""}签到获得${res.netdiskBonus}M空间`;
 };
 
-const doFamilyTask = async (cloudClient) => {
-  const { familyInfoResp } = await cloudClient.getFamilyList();
-  const result = [];
-  if (familyInfoResp) {
-    for (let index = 0; index < familyInfoResp.length; index += 1) {
-      const { familyId } = familyInfoResp[index];
-      const res = await cloudClient.familyUserSign(familyId);
-      result.push(
-        "家庭任务" +
-          `${res.signStatus? "已经签到过了，" : ""}签到获得${
-            res.bonusSpace
-          }M空间`
-      );
-    }
-  }
-  return result;
+// 查询容量
+const getCapacityInfo = async (cloudClient) => {
+  const { cloudCapacityInfo, familyCapacityInfo } =
+    await cloudClient.getUserSizeInfo();
+
+  const personalSize = cloudCapacityInfo && cloudCapacityInfo.totalSize
+    ? (cloudCapacityInfo.totalSize / 1024 / 1024 / 1024).toFixed(2)
+    : "0.00";
+
+  const familySize = familyCapacityInfo && familyCapacityInfo.totalSize
+    ? (familyCapacityInfo.totalSize / 1024 / 1024 / 1024).toFixed(2)
+    : "0.00";
+
+  return `个人：${personalSize}G，家庭：${familySize}G`;
 };
 
-// 开始执行程序
+// 执行单个账号
 async function main(userName, password) {
-  if (userName && password) {
-    const userNameInfo = mask(userName, 3, 7);
-    try {
-      message.push(`账户 ${userNameInfo}开始执行`);
-      console.log(`账户 ${userNameInfo}开始执行`);
-      const cloudClient = new CloudClient(userName, password);
-      await cloudClient.login();
-      const result = await doTask(cloudClient);
-      result.forEach((r) => console.log(r));
-      const familyResult = await doFamilyTask(cloudClient);
-      familyResult.forEach((r) => console.log(r));
-
-      console.log("任务执行完毕");
-      const { cloudCapacityInfo, familyCapacityInfo } =
-        await cloudClient.getUserSizeInfo();
-      let txt =
-        `个人：${(
-          cloudCapacityInfo.totalSize /
-          1024 /
-          1024 /
-          1024
-        ).toFixed(2)}G,家庭：${(
-          familyCapacityInfo.totalSize /
-          1024 /
-          1024 /
-          1024
-        ).toFixed(2)}G`;
-
-      message.push(txt);
-      console.log(txt);
-    } catch (e) {
-      console.error(e);
-      if (e.code === "ECONNRESET") {
-        throw e;
-      }
-    } finally {
-      message.push(`账户 ${userNameInfo}执行完毕`);
-    }
+  if (!userName || !password) {
+    console.log("账号或密码为空，跳过");
+    return;
   }
-}
 
-(async () => {
+  const userNameInfo = mask(userName, 3, 7);
+
   try {
-    const c189s = process.env.CLOUD_189;
-if (!c189s) {
-  console.log('未获取到天翼云盘 CLOUD_189');
-  return;
-}
-let account = c189s.split('\n');
+    console.log(`账户 ${userNameInfo}开始执行`);
 
+    const cloudClient = new CloudClient({
+      username: userName,
+      password: password
+    });
 
+    // 只执行个人签到
+    const signText = await doSignTask(cloudClient);
+    console.log(signText);
 
-    for (const c189 of account) {
-      let date = c189.split('#');
-      await main(date[0], date[1]);
+    // 查询容量，失败也不影响签到
+    try {
+      const capacityText = await getCapacityInfo(cloudClient);
+      console.log(capacityText);
+    } catch (e) {
+      console.log("容量查询失败，已跳过：" + (e.message || e));
+    }
+
+    console.log("任务执行完毕");
+  } catch (e) {
+    console.error(`账户 ${userNameInfo}执行失败：${e.message || e}`);
+
+    if (e.code === "ECONNRESET") {
+      throw e;
     }
   } finally {
-    console.log(message.join('\n'));
-    // 将消息内容写入日志文件
-    const logContent = message.join('\n');
-    fs.writeFileSync('天翼云盘签到日志.txt', logContent);
+    console.log(`账户 ${userNameInfo}执行完毕`);
+  }
+}
+
+// 程序入口
+(async () => {
+  const c189s = process.env.CLOUD_189;
+
+  if (!c189s) {
+    console.log("未获取到天翼云盘 CLOUD_189");
+    return;
+  }
+
+  const accounts = c189s
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  for (const account of accounts) {
+    const [userName, password] = account.split("#").map((item) => item.trim());
+
+    if (!userName || !password) {
+      console.log(`账号格式错误，正确格式为：手机号#密码，当前值：${account}`);
+      continue;
+    }
+
+    await main(userName, password);
   }
 })();
