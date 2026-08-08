@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+new Env('铛铛一下签到');
+cron: 10 9 * * *
+
 脚本名称：铛铛一下签到
 脚本作者：3iXi
 创建时间：2026-03-06
