@@ -49,11 +49,15 @@ def load_token_cache() -> Dict[str, str]:
     return {}
 
 
-def save_token_cache(cache: Dict[str, str]) -> bool:
-    """将 token 缓存写入本地文件"""
+def save_token_cache(name: str, refresh_token: str) -> bool:
+    """将单个账号的 token 合并写入本地缓存文件（先读再写，不覆盖其他账号）"""
+    # 先读取现有缓存
+    existing = load_token_cache()
+    # 合并新 token
+    existing[name] = refresh_token
     try:
         with open(CACHE_FILE, "w", encoding="utf-8") as f:
-            json.dump(cache, f, ensure_ascii=False, indent=2)
+            json.dump(existing, f, ensure_ascii=False, indent=2)
         return True
     except Exception as e:
         logger.warning(f"写入缓存文件失败: {e}")
@@ -62,12 +66,11 @@ def save_token_cache(cache: Dict[str, str]) -> bool:
 
 # ==================== 核心逻辑 ====================
 class ALiYun:
-    def __init__(self, name: str, refresh_token: str, cache_dict: Dict[str, str] = None):
+    def __init__(self, name: str, refresh_token: str):
         self.session = requests.Session()
         self.name = name
         self.refresh_token = refresh_token
         self.access_token = ""
-        self.cache_dict = cache_dict or {}  # 缓存引用，用于更新
         self.headers = {
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 AlphaDrive/3.0.0",
             "Content-Type": "application/json; charset=utf-8"
@@ -84,10 +87,11 @@ class ALiYun:
                 new_refresh_token = res.get('refresh_token', '')
                 if new_refresh_token and new_refresh_token != self.refresh_token:
                     self.refresh_token = new_refresh_token
-                    # 自动更新本地缓存
-                    self.cache_dict[self.name] = new_refresh_token
-                    save_token_cache(self.cache_dict)
-                    logger.info(f"[{self.name}] ✅ refresh_token 已自动更新并写入缓存")
+                    # 自动更新本地缓存（先读再写，不会覆盖其他账号）
+                    if save_token_cache(self.name, new_refresh_token):
+                        logger.info(f"[{self.name}] ✅ refresh_token 已自动更新并写入缓存")
+                    else:
+                        logger.warning(f"[{self.name}] ⚠️ refresh_token 更新成功，但写入缓存失败")
                 return True
             logger.error(f"[{self.name}] 刷新 Token 失败: {res.get('message', '未知错误')}")
             return False
@@ -192,7 +196,7 @@ def main():
             use_token = env_token
             logger.info(f"[{name}] 缓存中无记录，使用环境变量中的 refresh_token")
 
-        client = ALiYun(name, use_token, cache_dict=token_cache)
+        client = ALiYun(name, use_token)
         try:
             report = client.run()
             final_reports.append(report)
