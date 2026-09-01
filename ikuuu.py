@@ -9,8 +9,8 @@ cron: 10 10 * * *
 @创建时间：2025-03-12
 @脚本作者：3iXi（https://github.com/3ixi）
 @脚本功能：自动登录+自动签到+获取流量信息
-@脚本版本：1.3.2
-@更新时间：2026-05-09
+@脚本版本：1.3.3
+@更新时间：2026-09-01
 @需要依赖：requests PyYAML pycryptodome beautifulsoup4
 @脚本描述：
      1.访问https://ikuuu.org 注册账号
@@ -936,19 +936,22 @@ def check_in(email, passwd):
         print(f'[{email}] 验证码破解成功')
 
         data = {
+            'host': domain,
+            'phase': 'password',
             'email': email,
             'passwd': passwd,
-            'host': domain,
             'remember_me': 'on',
             'pageLoadedAt': int(time.time() * 1000),
-            'captcha_result[lot_number]': captcha_result['lot_number'],
-            'captcha_result[captcha_output]': captcha_result['captcha_output'],
-            'captcha_result[pass_token]': captcha_result['pass_token'],
-            'captcha_result[gen_time]': captcha_result['gen_time']
+            'captcha_result': {
+                'lot_number': captcha_result['lot_number'],
+                'captcha_output': captcha_result['captcha_output'],
+                'pass_token': captcha_result['pass_token'],
+                'gen_time': captcha_result['gen_time']
+            }
         }
 
         current_header = header.copy()
-        current_header['content-type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+        current_header['content-type'] = 'application/json'
         current_header['origin'] = f'https://{domain}'
         current_header['referer'] = f'https://{domain}/auth/login'
         
@@ -957,7 +960,7 @@ def check_in(email, passwd):
         response = session.post(
             url=login_url, 
             headers=current_header, 
-            data=data,
+            json=data,
             timeout=15
         )
         
