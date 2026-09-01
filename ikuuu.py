@@ -969,8 +969,14 @@ def check_in(email, passwd):
             
         try:
             response_data = response.json()
-            print(f"登录响应: {response_data.get('msg', '无消息')}")
-            if response_data.get('ret') != 1:
+            print(f"登录响应: {json.dumps(response_data, ensure_ascii=False)[:300]}")
+            # 多阶段登录：ret==1 或 phase==authenticated 或 msg含"成功" 都视为登录成功
+            login_ok = (
+                response_data.get('ret') == 1
+                or response_data.get('phase') == 'authenticated'
+                or '成功' in str(response_data.get('msg', ''))
+            )
+            if not login_ok:
                 return f"登录失败: {response_data.get('msg')}", None, None
         except:
             if response.status_code == 302:
