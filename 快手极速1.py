@@ -1,5 +1,43 @@
 #!/usr/bin/python
 # coding=utf-8
+"""
+快手极速版签到脚本
+====================
+版本: v1.4
+修改日期: 2026-09-03
+
+修改记录:
+  v1.4 (2026-09-03):
+    - 饭补增加看广告等待逻辑：返回6001时自动等待35秒后重试
+    - 脚本开头增加版本号、修改日期、修改记录
+    - 增加饭补等待时间环境变量 KSJSB_FANBU_WAIT（默认35秒）
+
+  v1.3 (2026-09-03):
+    - 修复宝箱状态判断：通过 reportCode 判断是否时间校验失败
+    - 时间未到时显示下一个宝箱倒计时和今日进度
+    - 真正领取成功才打印实际到账金币，不再显示标称奖励
+
+  v1.2 (2026-09-03):
+    - 支持多账号独立签名：KSJSB_COOKIE、KSJSB_COOKIE2、KSJSB_COOKIE3...
+    - 每个账号格式：cookie|||宝箱sig3|||签到sig3|||饭补sig4
+    - 修复签到接口 reportRewardResult 为 None 时报错的问题
+
+  v1.1 (2026-09-03):
+    - 增加调试模式 KSJSB_DEBUG=1，打印所有接口完整响应
+    - 修复宝箱奖励字段取值，增加实际奖励字段探测
+
+  v1.0 (原始版本):
+    - 基础功能：宝箱、饭补、签到、余额查询
+    - 单账号，环境变量 KSJSB_COOKIE
+
+环境变量说明:
+  KSJSB_COOKIE    第1个账号，格式：cookie|||宝箱sig3|||签到sig3|||饭补sig4
+  KSJSB_COOKIE2   第2个账号（格式同上）
+  KSJSB_COOKIE3   第3个账号（格式同上，以此类推）
+  KSJSB_DEBUG     调试模式，设为1打印完整响应（默认0）
+  KSJSB_DELAY     账号间延迟秒数（默认3）
+  KSJSB_FANBU_WAIT 饭补看广告等待秒数（默认35）
+"""
 import sys
 import os
 import traceback
@@ -135,26 +173,65 @@ def get_baoxiang(token, __NS_sig3, account_tag=""):
         resp_json = resp.json()
         if DEBUG:
             print(f"{account_tag}[宝箱完整响应] {json.dumps(resp_json, ensure_ascii=False)}")
-        if resp_json.get('result') == 1:
-            data = resp_json.get('data') or {}
-            title_info = data.get('title') or {}
-            title_reward = title_info.get('rewardCount', 0)
-            actual_reward = (
-                data.get('rewardCount')
-                or data.get('amount')
-                or data.get('coin')
-                or data.get('gainCoin')
-                or data.get('obtainCoin')
-                or 0
-            )
-            if actual_reward and actual_reward != title_reward:
-                print(f"{account_tag}宝箱标称：{title_reward} 金币，实际到账：{actual_reward} 金币")
+
+        if resp_json.get('result') != 1:
+            print(f"{account_tag}宝箱接口失败: {resp_json.get('error_msg', '未知错误')}")
+            return access_token
+
+        data = resp_json.get('data') or {}
+        report_code = data.get('reportCode', '')
+        title_info = data.get('title') or {}
+        title_text = title_info.get('text', '')
+        nominal_reward = title_info.get('rewardCount', 0)
+        prize_amount = data.get('prizeAmount', 0)
+        toast = data.get('toast', '')
+
+        # 从 progressBar 读取下一个可领宝箱的倒计时
+        progress = data.get('progressBar') or {}
+        nodes = progress.get('nodes', [])
+        next_box = None
+        opened_count = 0
+        for node in nodes:
+            style = node.get('style', 0)
+            if style == 1:
+                opened_count += 1
+            elif style == 2 and node.get('remainSeconds', 0) > 0:
+                if next_box is None:
+                    next_box = node
+
+        total_boxes = progress.get('title', '').replace('今天共有', '').replace('个宝箱可开启', '')
+
+        # 判断是否真正领取成功
+        time_check_failed = 'TIME_CHECK_FAILED' in report_code or '倒计时' in title_text
+        has_reward = prize_amount > 0 or bool(toast)
+
+        if time_check_failed:
+            # 时间没到，领不到
+            if next_box:
+                remain = next_box.get('remainSeconds', 0)
+                minutes = remain // 60
+                seconds = remain % 60
+                box_desc = next_box.get('desc', '')
+                box_reward = next_box.get('rewardCount', '?')
+                print(f"{account_tag}宝箱还在倒计时，{box_desc}还有 {minutes}分{seconds}秒（标称{box_reward}金币）")
             else:
-                print(f"{account_tag}得到金币：{title_reward}")
-                if title_reward == 754:
-                    print(f"{account_tag}⚠️ 金币数为固定值754，可能只是宝箱标称值。建议开 KSJSB_DEBUG=1 查看完整响应")
+                print(f"{account_tag}当前没有可领取的宝箱")
+            if total_boxes:
+                print(f"{account_tag}今日进度：已开{opened_count}个，共{total_boxes}个")
+        elif has_reward:
+            # 真正领到了
+            print(f"{account_tag}✅ 宝箱领取成功！获得 {prize_amount} 金币")
+            if toast:
+                print(f"{account_tag}{toast}")
+            if total_boxes:
+                print(f"{account_tag}今日进度：已开{opened_count + 1}个，共{total_boxes}个")
         else:
-            print(f"{account_tag}宝箱领取失败: {resp_json.get('error_msg', '未知错误')}")
+            # 不确定状态
+            print(f"{account_tag}宝箱状态：reportCode={report_code}, prizeAmount={prize_amount}")
+            if toast:
+                print(f"{account_tag}提示: {toast}")
+            if nominal_reward:
+                print(f"{account_tag}（标称奖励 {nominal_reward} 金币，未确认是否到账）")
     except:
         print(f"{account_tag}获取异常:{traceback.format_exc()}")
 
@@ -181,22 +258,55 @@ def get_fanbu(token, __NS_sig4, account_tag=""):
             "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
             "Cookie": token
         }
-        resp = requests.post(url, headers=headers, data=json.dumps({}))
-        resp_json = resp.json()
-        if DEBUG:
-            print(f"{account_tag}[饭补完整响应] {json.dumps(resp_json, ensure_ascii=False)}")
+
+        def _do_report(attempt_name):
+            """执行一次饭补领取请求"""
+            resp = requests.post(url, headers=headers, data=json.dumps({}))
+            resp_json = resp.json()
+            if DEBUG:
+                print(f"{account_tag}[饭补{attempt_name}响应] {json.dumps(resp_json, ensure_ascii=False)}")
+            return resp_json
+
+        # 第一次尝试
+        resp_json = _do_report("第1次")
+
         if resp_json.get('result') == 1:
             data = resp_json.get('data') or {}
             title = data.get('title', '饭补')
             dsd = data.get('amount', 0)
-            print(f"{account_tag}{title} 共计: {dsd}")
-        else:
-            error_code = resp_json.get('error_code', '')
-            error_msg = resp_json.get('error_msg', '未知错误')
-            if error_code == 6001 or '6001' in str(error_msg):
-                print(f"{account_tag}饭补今日已领取或接口限流（6001）")
+            print(f"{account_tag}✅ {title} 共计: {dsd}")
+            return
+
+        # 检查是否需要看广告（6001）
+        error_code = resp_json.get('result', '') or resp_json.get('error_code', '')
+        error_msg = resp_json.get('msg', '') or resp_json.get('error_msg', '')
+        need_ad = (error_code == 6001 or '6001' in str(error_msg) or '广告' in str(error_msg))
+
+        if need_ad:
+            wait_seconds = int(os.getenv('KSJSB_FANBU_WAIT', '35'))
+            print(f"{account_tag}需要看广告才能领取，模拟等待 {wait_seconds} 秒...")
+            # 模拟看广告等待
+            time.sleep(wait_seconds)
+            print(f"{account_tag}广告等待完成，重试领取...")
+
+            # 第二次尝试
+            resp_json2 = _do_report("第2次")
+
+            if resp_json2.get('result') == 1:
+                data = resp_json2.get('data') or {}
+                title = data.get('title', '饭补')
+                dsd = data.get('amount', 0)
+                print(f"{account_tag}✅ {title} 共计: {dsd}")
+                return
             else:
-                print(f"{account_tag}饭补领取失败: {error_msg}（{error_code}）")
+                error_code2 = resp_json2.get('result', '') or resp_json2.get('error_code', '')
+                error_msg2 = resp_json2.get('msg', '') or resp_json2.get('error_msg', '')
+                print(f"{account_tag}饭补领取失败（看广告后重试）: {error_msg2}（{error_code2}）")
+                print(f"{account_tag}提示：如果持续失败，可能需要真实的广告上报接口，仅等待可能不够")
+                return
+
+        # 其他错误
+        print(f"{account_tag}饭补领取失败: {error_msg}（{error_code}）")
     except:
         print(f"{account_tag}获取异常:{traceback.format_exc()}")
 
