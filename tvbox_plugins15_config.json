@@ -1,37 +1,5 @@
 {
   "spider": "https://ysnew.780420.xyz:17777/spring.jar",
-  "parses": [
-    {
-      "url": "https://jx.xmflv.com/?url=",
-      "ext": {
-        "header": {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
-        }
-      },
-      "type": 0,
-      "name": "虾米"
-    },
-    {
-      "name": "解析聚合",
-      "type": 3,
-      "url": "Web"
-    },
-    {
-      "name": "HLS",
-      "type": 0,
-      "url": "https://jx.hls.one/?url="
-    },
-    {
-      "name": "虾米",
-      "type": 0,
-      "url": "https://jx.xmflv.com/?url="
-    },
-    {
-      "name": "虾米2",
-      "type": 0,
-      "url": "https://jx.xmflv.cc/?url="
-    }
-  ],
   "headers": [
     {
       "host": "img\\d+.doubanio.com",
@@ -102,8 +70,243 @@
       ]
     }
   ],
+  "lives": [
+    {
+      "name": "范明明",
+      "type": 0,
+      "url": "https://ghfast.top/raw.githubusercontent.com/fanmingming/live/refs/heads/main/tv/m3u/ipv6.m3u",
+      "playerType": 1,
+      "ua": "okhttp/3.15",
+      "epg": "http://epg.112114.xyz/?ch={name}&date={date}",
+      "logo": "https://epg.112114.xyz/logo/{name}.png"
+    },
+    {
+      "name": "develop202",
+      "type": 0,
+      "url": "https://gh.927223.xyz/https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/interface.txt",
+      "playerType": 2,
+      "epg": "http://diyp5.112114.xyz/?ch={name}&date={date}",
+      "logo": "https://epg.112114.xyz/logo/{name}.png"
+    },
+    {
+      "name": "Kimentanm",
+      "type": 0,
+      "url": "https://gh.927223.xyz/https://raw.githubusercontent.com/Kimentanm/aptv/master/m3u/iptv.m3u",
+      "playerType": 2
+    },
+    {
+      "name": "范明明（需开启V6网络）",
+      "type": 0,
+      "url": "https://nos.netease.com/ysf/3d75a78a0fc7ede372c03598d6d10367.m3u",
+      "playerType": 2
+    },
+    {
+      "name": "虎牙一起看",
+      "type": 0,
+      "url": "https://file.icve.com.cn/file_doc/946/41/ECB0A5FBED1D8C4D4E049E95DB9F756F.m3u",
+      "playerType": 2,
+      "timeout": 10,
+      "ua": "okHttp/Mod-1.5.0.0"
+    },
+    {
+      "name": "斗鱼一起看",
+      "type": 0,
+      "url": "https://file.icve.com.cn/file_doc/254/346/3FB56B2C49DF92B3252352FBE5CD00F1.m3u",
+      "playerType": 2,
+      "timeout": 10,
+      "ua": "okHttp/Mod-1.5.0.0"
+    },
+    {
+      "name": "B站直播",
+      "type": 0,
+      "url": "https://file.icve.com.cn/file_doc/220/1003/370FAE41BD301F89BA1FCD6FDB8D5BD6.m3u",
+      "playerType": 2,
+      "timeout": 10,
+      "ua": "okHttp/Mod-1.5.0.0"
+    },
+    {
+      "name": "YY轮播",
+      "type": 0,
+      "url": "https://file.icve.com.cn/file_doc/178/700/2C9AF1F98DBC1523826C0CD4DA8D8947.m3u",
+      "playerType": 2,
+      "timeout": 10,
+      "ua": "okHttp/Mod-1.5.0.0"
+    }
+  ],
+  "hosts": [
+    "img1.wsyzy.org=fan.cloudflare.182682.xyz",
+    "fiizvfck.top=fan.cloudflare.182682.xyz",
+    "images.67c6c7a.com=fan.cloudflare.182682.xyz"
+  ],
+  "rules": [
+    {
+      "name": "cdn.ryplay",
+      "hosts": [
+        "cdn.ryplay"
+      ],
+      "regex": [
+        "5.480000",
+        "#EXT-X-DISCONTINUITY\\r*\\n*#EXTINF:5.480000,[\\s\\S]*?#EXT-X-DISCONTINUITY",
+        "#EXT-X-DISCONTINUITY\\s*\\r?\\n#EXTINF:5.320000,\\s*\\r?\\n.+\\.ts\\s*\\r?\\n(?:#EXTINF:[\\d.]+,\\s*\\r?\\n.+\\.ts\\s*\\r?\\n)*?#EXTINF:3.360000,\\s*\\r?\\n.+\\.ts\\s*\\r?\\n#EXT-X-DISCONTINUITY",
+        "#EXT-X-DISCONTINUITY\\s*\\r?\\n#EXTINF:4.000000,\\s*\\r?\\n.+\\.ts\\s*\\r?\\n(?:#EXTINF:[\\d.]+,\\s*\\r?\\n.+\\.ts\\s*\\r?\\n)*?#EXTINF:0.560000,\\s*\\r?\\n.+\\.ts\\s*\\r?\\n#EXT-X-DISCONTINUITY",
+        "#EXTINF.*?\\s+.*?1o.*?\\.ts\\s+"
+      ]
+    }
+  ],
   "notice": "本系统目前仅支持百度、夸克和UC网盘，夸克限10G。",
+  "菜妮丝": "https://菜妮丝.top",
+  "友情提醒": "接口完全免费，切勿付费购买。",
+  "parses": [
+    {
+      "url": "https://jx.xmflv.com/?url=",
+      "ext": {
+        "header": {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.57"
+        }
+      },
+      "type": 0,
+      "name": "虾米"
+    },
+    {
+      "name": "解析聚合",
+      "type": 3,
+      "url": "Web"
+    },
+    {
+      "name": "HLS",
+      "type": 0,
+      "url": "https://jx.hls.one/?url="
+    },
+    {
+      "name": "虾米2",
+      "type": 0,
+      "url": "https://jx.xmflv.cc/?url="
+    }
+  ],
   "sites": [
+    {
+      "ext": "eyJwdCI6IiIsInBhblNlYXJjaCI6dHJ1ZSwidXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3dlYmhvbWUvYXBwLmh0bWw/dG9rZW49YmFpcGlhb2d1YWkmdj0yMiIsInRva2VuIjoiYmFpcGlhb2d1YWkifQ==",
+      "filterable": 0,
+      "quickSearch": 0,
+      "name": "影视首页",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_WebHome",
+      "type": 3,
+      "homePage": "https://ysnew.780420.xyz:17777/webhome/app.html?token=baipiaoguai&v=22",
+      "key": "atv_home",
+      "searchable": 0,
+      "order": 10
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 0,
+      "name": "全球影视",
+      "indexs": 1,
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_PianDan",
+      "type": 3,
+      "key": "csp_PianDan",
+      "searchable": 0,
+      "order": 20
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 1,
+      "name": "挂载资源",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_AList",
+      "type": 3,
+      "key": "csp_AList",
+      "searchable": 1,
+      "order": 30
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 1,
+      "name": "BiliBili",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "api": "csp_BiliBili",
+      "type": 3,
+      "key": "csp_BiliBili",
+      "searchable": 1,
+      "order": 40
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 1,
+      "name": "我的追剧",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_Media",
+      "type": 3,
+      "key": "csp_Media",
+      "searchable": 1,
+      "order": 50
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 1,
+      "name": "网络直播",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_Live",
+      "type": 3,
+      "key": "csp_Live",
+      "searchable": 1,
+      "order": 60
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 1,
+      "name": "盘搜|高码[盘]",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_FishPanSou",
+      "type": 3,
+      "key": "csp_FishPanSou",
+      "searchable": 1,
+      "order": 70
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 1,
+      "name": "盘搜 |分组[盘]",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_FishPanSouGroup",
+      "type": 3,
+      "key": "csp_FishPanSouGroup",
+      "searchable": 1,
+      "order": 80
+    },
+    {
+      "ext": "eyJ1aWQiOiI2MjEwZTliMzZiNTY0YjVmYmQxNDM1YWFjZGJkZjY3YSIsInBsYXliYWNrVG9rZW4iOiIiLCJhcGkiOiJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzciLCJzZWNyZXQiOiJkNjAwODRmMWQzMjQ0YmRkYmNmZDU4MGRlMWI4ZmQxNiIsInBsYXliYWNrQ29uZmlnVXJsIjoiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwidG9rZW4iOiJiYWlwaWFvZ3VhaSIsImxvY2FsX3Byb3h5X2NvbmZpZyI6eyJQQU4xMzkiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NH0sIlBBTjExNSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6Mn0sIkdVQU5HWUEiOnsiY2h1bmtfc2l6ZSI6MjU2LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MTB9LCJRVUFSSyI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJCQUlEVSI6eyJjaHVua19zaXplIjoyMDQ4LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6NX0sIkFMSSI6eyJjaHVua19zaXplIjoxMDI0LCJlbmFibGVkIjp0cnVlLCJjb25jdXJyZW5jeSI6MjB9LCJVQyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5IjoxMH0sIlBBTjEyMyI6eyJjaHVua19zaXplIjoyNTYsImVuYWJsZWQiOnRydWUsImNvbmN1cnJlbmN5Ijo0fX19",
+      "filterable": 1,
+      "quickSearch": 0,
+      "name": "AT推送",
+      "changeable": 0,
+      "jar": "https://ysnew.780420.xyz:17777/spring.jar",
+      "api": "csp_Push",
+      "type": 3,
+      "key": "push_agent",
+      "searchable": 0,
+      "order": 90
+    },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICJmODg2YTRiZTcyYmQ0Yzc1YWU4YWVjYzUzNTk3YTY3MjZmMzgiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvMTgudHh0P3Y9MjQiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICJRUemfs+S5kFvpn7NdIiwKICAicGxheWJhY2tDb25maWdVcmwiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9zdWIvYmFpcGlhb2d1YWkvMiIsCiAgInRva2VuIiA6ICJiYWlwaWFvZ3VhaSIsCiAgImxvY2FsX3Byb3h5X2NvbmZpZyIgOiB7CiAgICAiUEFOMTM5IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfSwKICAgICJQQU4xMTUiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMgogICAgfSwKICAgICJHVUFOR1lBIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUVVBUksiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMjAKICAgIH0sCiAgICAiQkFJRFUiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyMDQ4LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNQogICAgfSwKICAgICJBTEkiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMjAKICAgIH0sCiAgICAiVUMiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAxMAogICAgfSwKICAgICJQQU4xMjMiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA0CiAgICB9CiAgfQp9",
       "filterable": 1,
@@ -115,7 +318,7 @@
       "type": 3,
       "key": "f886a4be72bd4c75ae8aecc53597a6726f38",
       "searchable": 1,
-      "order": 10
+      "order": 100
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICI5ODBiOTg0N2FkZjE0MTM3OGEyNjQxNDliN2RjZmFjNjM3ZTIiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvMjQudHh0P3Y9MyIsCiAgInNlY3JldCIgOiAiZDYwMDg0ZjFkMzI0NGJkZGJjZmQ1ODBkZTFiOGZkMTYiLAogICJwcmVoZWF0VXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzcvcGx1Z2luLXByZWhlYXQvYmFpcGlhb2d1YWkiLAogICJwbGF5YmFja1NvdXJjZU5hbWUiIDogIuicu+ick0ZNW+WQrF0iLAogICJwbGF5YmFja0NvbmZpZ1VybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwKICAidG9rZW4iIDogImJhaXBpYW9ndWFpIiwKICAibG9jYWxfcHJveHlfY29uZmlnIiA6IHsKICAgICJQQU4xMzkiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA0CiAgICB9LAogICAgIlBBTjExNSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyCiAgICB9LAogICAgIkdVQU5HWUEiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAxMAogICAgfSwKICAgICJRVUFSSyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyMAogICAgfSwKICAgICJCQUlEVSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDIwNDgsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA1CiAgICB9LAogICAgIkFMSSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyMAogICAgfSwKICAgICJVQyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlBBTjEyMyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0KICB9Cn0=",
@@ -128,7 +331,7 @@
       "type": 3,
       "key": "980b9847adf141378a264149b7dcfac637e2",
       "searchable": 1,
-      "order": 20
+      "order": 110
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICJkOWQ0OGQ4YzZlN2E0MzcwYTczNDVjMmIzMWViZDljYWJkYzAiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvMjcudHh0P3Y9NyIsCiAgInNlY3JldCIgOiAiZDYwMDg0ZjFkMzI0NGJkZGJjZmQ1ODBkZTFiOGZkMTYiLAogICJwcmVoZWF0VXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzcvcGx1Z2luLXByZWhlYXQvYmFpcGlhb2d1YWkiLAogICJwbGF5YmFja1NvdXJjZU5hbWUiIDogIumFt+eLl+mfs+S5kFvpn7NdIiwKICAicGxheWJhY2tDb25maWdVcmwiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9zdWIvYmFpcGlhb2d1YWkvMiIsCiAgInRva2VuIiA6ICJiYWlwaWFvZ3VhaSIsCiAgImxvY2FsX3Byb3h5X2NvbmZpZyIgOiB7CiAgICAiUEFOMTM5IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfSwKICAgICJQQU4xMTUiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMgogICAgfSwKICAgICJHVUFOR1lBIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUVVBUksiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMjAKICAgIH0sCiAgICAiQkFJRFUiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyMDQ4LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNQogICAgfSwKICAgICJBTEkiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMjAKICAgIH0sCiAgICAiVUMiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAxMAogICAgfSwKICAgICJQQU4xMjMiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA0CiAgICB9CiAgfQp9",
@@ -141,7 +344,7 @@
       "type": 3,
       "key": "d9d48d8c6e7a4370a7345c2b31ebd9cabdc0",
       "searchable": 1,
-      "order": 30
+      "order": 120
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICI1OTAxMDFjODczNTU0YjIyODNhNjZhZTVhMjVjZjRmZjVmZDEiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvMjgudHh0P3Y9MTYiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLnjqnlgbblk6Xlk6Vb55uYXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0KfQ==",
@@ -154,7 +357,7 @@
       "type": 3,
       "key": "590101c873554b2283a66ae5a25cf4ff5fd1",
       "searchable": 1,
-      "order": 40
+      "order": 130
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICIzZmMyNDRkNGY5ZGY0NGI3OTI3NzE1NjE1MTVmNGVhNTBkYjgiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvNDIudHh0P3Y9MTAiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLmsrPpqaznn63liadb55+tXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0KfQ==",
@@ -167,7 +370,7 @@
       "type": 3,
       "key": "3fc244d4f9df44b792771561515f4ea50db8",
       "searchable": 1,
-      "order": 50
+      "order": 140
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICIyMzRkZDc0Nzc0ZTk0NzYyYWVjZGEwNzRkOTk4MDlhNjk4YmQiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvNDYudHh0P3Y9MiIsCiAgInNlY3JldCIgOiAiZDYwMDg0ZjFkMzI0NGJkZGJjZmQ1ODBkZTFiOGZkMTYiLAogICJwcmVoZWF0VXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzcvcGx1Z2luLXByZWhlYXQvYmFpcGlhb2d1YWkiLAogICJwbGF5YmFja1NvdXJjZU5hbWUiIDogIjI3NeWQrOS5plvlkKxdIiwKICAicGxheWJhY2tDb25maWdVcmwiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9zdWIvYmFpcGlhb2d1YWkvMiIsCiAgInRva2VuIiA6ICJiYWlwaWFvZ3VhaSIsCiAgImxvY2FsX3Byb3h5X2NvbmZpZyIgOiB7CiAgICAiUEFOMTM5IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfSwKICAgICJQQU4xMTUiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMgogICAgfSwKICAgICJHVUFOR1lBIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUVVBUksiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMjAKICAgIH0sCiAgICAiQkFJRFUiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyMDQ4LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNQogICAgfSwKICAgICJBTEkiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAxMDI0LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMjAKICAgIH0sCiAgICAiVUMiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAxMAogICAgfSwKICAgICJQQU4xMjMiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA0CiAgICB9CiAgfQp9",
@@ -180,7 +383,7 @@
       "type": 3,
       "key": "234dd74774e94762aecda074d99809a698bd",
       "searchable": 1,
-      "order": 60
+      "order": 150
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICI4YWFlMzkwYzIzN2I0YWVkOTViY2Y1NDA3YTNhNGU2MWFhZWIiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvNDcudHh0P3Y9NyIsCiAgInNlY3JldCIgOiAiZDYwMDg0ZjFkMzI0NGJkZGJjZmQ1ODBkZTFiOGZkMTYiLAogICJwcmVoZWF0VXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzcvcGx1Z2luLXByZWhlYXQvYmFpcGlhb2d1YWkiLAogICJwbGF5YmFja1NvdXJjZU5hbWUiIDogIuWQrOWPi0ZNW+WQrF0iLAogICJwbGF5YmFja0NvbmZpZ1VybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIiwKICAidG9rZW4iIDogImJhaXBpYW9ndWFpIiwKICAibG9jYWxfcHJveHlfY29uZmlnIiA6IHsKICAgICJQQU4xMzkiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA0CiAgICB9LAogICAgIlBBTjExNSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyCiAgICB9LAogICAgIkdVQU5HWUEiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAxMAogICAgfSwKICAgICJRVUFSSyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyMAogICAgfSwKICAgICJCQUlEVSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDIwNDgsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA1CiAgICB9LAogICAgIkFMSSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyMAogICAgfSwKICAgICJVQyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlBBTjEyMyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0KICB9Cn0=",
@@ -193,7 +396,7 @@
       "type": 3,
       "key": "8aae390c237b4aed95bcf5407a3a4e61aaeb",
       "searchable": 1,
-      "order": 70
+      "order": 160
     },
     {
       "ext": "ewogICJkYXRhIiA6ICJ7XG4gIFwic2l0ZXNcIjogXCJodHRwczovLzEyMy5xc3h5LnRvcFwiLFxuICBcImNvb2tpZVwiOiBcIndvcmRwcmVzc19sb2dnZWRfaW5fMTIxM2UyYmJmYzIxMGY2MGJlMjY3YmI1MGRjYWQ1MjM9YmFueWUlN0MxNzg5ODA1NjIyJTdDOVFIVUdtS2t0U2t3b0d0U0pXV094YW5VOHhFa0NyQ1FBTEdONjdXT0pGeCU3Q2JhMGI2MWY2N2E0NmFiNjlkMGQ2ZTk0YzhmMDIzYmVhYjFiNzhmZWY3MWZmZDkzMjc1ZWIwMTRkMTJlZmRiMDdcIlxufSIsCiAgInBsYXliYWNrVG9rZW4iIDogIiIsCiAgImxvYWRlciIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L0F0dnAucHk/dj1wcmVoZWF0LXYxIiwKICAicGxheWJhY2tTb3VyY2VLZXkiIDogIjc2ZTJkNGE3YjVkNjQ4NzdhOTZkOGU1NjllNDdhNjY4ZmJiYyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvNTUudHh0P3Y9NyIsCiAgInNlY3JldCIgOiAiZDYwMDg0ZjFkMzI0NGJkZGJjZmQ1ODBkZTFiOGZkMTYiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0sCiAgInBsYXliYWNrU291cmNlS2luZCIgOiAic3BpZGVyX3BsdWdpbiIsCiAgImFwaSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICIxMjPoh7vol49b55uYXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiCn0=",
@@ -206,7 +409,7 @@
       "type": 3,
       "key": "76e2d4a7b5d64877a96d8e569e47a668fbbc",
       "searchable": 1,
-      "order": 80
+      "order": 170
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICJmZjAzYTgxZWEyYzk0MGQ0ODM4ZTcxZmIyMWNmNjY1MTE1N2QiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvNTcudHh0P3Y9NTEiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLnn63liafkvJjpgIlb55+tXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0KfQ==",
@@ -219,7 +422,7 @@
       "type": 3,
       "key": "ff03a81ea2c940d4838e71fb21cf6651157d",
       "searchable": 1,
-      "order": 90
+      "order": 180
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICIwMjU0NGIzMjBhNmQ0NWRlOTk3YmMwYmQzOTc1ZDBjMDYwYjgiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvODQudHh0P3Y9MTQiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLmnKjlgbZb55uYXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0KfQ==",
@@ -232,7 +435,7 @@
       "type": 3,
       "key": "02544b320a6d45de997bc0bd3975d0c060b8",
       "searchable": 1,
-      "order": 100
+      "order": 190
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICI4MWJlOWY5OWEwOGE0ZGY5YmZjYWI5NThhYjdhNmMwMTA5ZDAiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvOTAudHh0P3Y9MjMiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLnjqnlgbbogZrlkIhb55uYXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0KfQ==",
@@ -245,7 +448,7 @@
       "type": 3,
       "key": "81be9f99a08a4df9bfcab958ab7a6c0109d0",
       "searchable": 1,
-      "order": 110
+      "order": 200
     },
     {
       "ext": "ewogICJkYXRhIiA6ICJ7XG4gIFwic2l0ZXNcIjogXCJodHRwczovL3d3dy54bi0td2N2NTl6LmNvbS9cIixcbiAgXCJ1c2VybmFtZVwiOiBcInhpeGl4dVwiLFxuICBcInBhc3N3b3JkXCI6IFwiQWFAMTIzNDU2XCJcbn0iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICJiYmIwMTUxNGYzZDU0ZTI3YmI0OGE4MGY1MGYyZTM5ZDVkYjAiLAogICJzb3VyY2UiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9wbHVnaW5zL2JhaXBpYW9ndWFpLzkzLnR4dD92PTciLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAidG9rZW4iIDogImJhaXBpYW9ndWFpIiwKICAibG9jYWxfcHJveHlfY29uZmlnIiA6IHsKICAgICJQQU4xMzkiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA0CiAgICB9LAogICAgIlBBTjExNSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyCiAgICB9LAogICAgIkdVQU5HWUEiIDogewogICAgICAiY2h1bmtfc2l6ZSIgOiAyNTYsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAxMAogICAgfSwKICAgICJRVUFSSyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyMAogICAgfSwKICAgICJCQUlEVSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDIwNDgsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiA1CiAgICB9LAogICAgIkFMSSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDEwMjQsCiAgICAgICJlbmFibGVkIiA6IHRydWUsCiAgICAgICJjb25jdXJyZW5jeSIgOiAyMAogICAgfSwKICAgICJVQyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlBBTjEyMyIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0KICB9LAogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInByZWhlYXRVcmwiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9wbHVnaW4tcHJlaGVhdC9iYWlwaWFvZ3VhaSIsCiAgInBsYXliYWNrU291cmNlTmFtZSIgOiAi6KeC5b2xW+ebmF0iLAogICJwbGF5YmFja0NvbmZpZ1VybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIgp9",
@@ -258,7 +461,7 @@
       "type": 3,
       "key": "bbb01514f3d54e27bb48a80f50f2e39d5db0",
       "searchable": 1,
-      "order": 120
+      "order": 210
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICJiYmI0YmE1NjFhM2M0MjFhYTk1ZTE3NGM0MjE3MzYzYmQ1Y2UiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvMTE0LnR4dD92PTkiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLnvZHmmJPkupFb6Z+zXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0KfQ==",
@@ -271,7 +474,7 @@
       "type": 3,
       "key": "bbb4ba561a3c421aa95e174c4217363bd5ce",
       "searchable": 1,
-      "order": 130
+      "order": 220
     },
     {
       "ext": "ewogICJwbGF5YmFja1NvdXJjZUtpbmQiIDogInNwaWRlcl9wbHVnaW4iLAogICJwbGF5YmFja1Rva2VuIiA6ICIiLAogICJsb2FkZXIiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3Ny9BdHZwLnB5P3Y9cHJlaGVhdC12MSIsCiAgInBsYXliYWNrU291cmNlS2V5IiA6ICJhNTY0ZWFhMTZmNTg0OTE0ODhiNGZhYjllMjA4YzBjOTFmNDgiLAogICJhcGkiIDogImh0dHBzOi8veXNuZXcuNzgwNDIwLnh5ejoxNzc3NyIsCiAgInNvdXJjZSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbnMvYmFpcGlhb2d1YWkvMTMxLnR4dD92PTMiLAogICJzZWNyZXQiIDogImQ2MDA4NGYxZDMyNDRiZGRiY2ZkNTgwZGUxYjhmZDE2IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLnuqLmnpznn63liadb55+tXSIsCiAgInBsYXliYWNrQ29uZmlnVXJsIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3Nzcvc3ViL2JhaXBpYW9ndWFpLzIiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0KfQ==",
@@ -284,7 +487,7 @@
       "type": 3,
       "key": "a564eaa16f58491488b4fab9e208c0c91f48",
       "searchable": 1,
-      "order": 140
+      "order": 230
     },
     {
       "ext": "ewogICJkYXRhIiA6ICJ7XG4gIFwic2l0ZVwiOiBcImh0dHBzOi8vd3d3LmtmenkubmV0L1wiLFxuICBcImNvb2tpZVwiOiBcImJic19zaWQ9ZjdkYnRpZmsxNTQyZnIxdHU1MWNrb3MxNGg7IGJic190b2tlbj1FTTVFcWtLV1VKeXVvTG5zNTVRcmtCWEx2TF8yRkJEMnpYeGhyQkhKd1lNREg3NDBGSVwiXG59IiwKICAicGxheWJhY2tUb2tlbiIgOiAiIiwKICAibG9hZGVyIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzcvQXR2cC5weT92PXByZWhlYXQtdjEiLAogICJwbGF5YmFja1NvdXJjZUtleSIgOiAiOTAzMGVkZmZhMzAzNGNjZmFiNjFmNzcwZDRjMGM0NjM2ZmM0IiwKICAic291cmNlIiA6ICJodHRwczovL3lzbmV3Ljc4MDQyMC54eXo6MTc3NzcvcGx1Z2lucy9iYWlwaWFvZ3VhaS8xMzIudHh0P3Y9MiIsCiAgInNlY3JldCIgOiAiZDYwMDg0ZjFkMzI0NGJkZGJjZmQ1ODBkZTFiOGZkMTYiLAogICJ0b2tlbiIgOiAiYmFpcGlhb2d1YWkiLAogICJsb2NhbF9wcm94eV9jb25maWciIDogewogICAgIlBBTjEzOSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDQKICAgIH0sCiAgICAiUEFOMTE1IiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIKICAgIH0sCiAgICAiR1VBTkdZQSIgOiB7CiAgICAgICJjaHVua19zaXplIiA6IDI1NiwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDEwCiAgICB9LAogICAgIlFVQVJLIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIkJBSURVIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjA0OCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDUKICAgIH0sCiAgICAiQUxJIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMTAyNCwKICAgICAgImVuYWJsZWQiIDogdHJ1ZSwKICAgICAgImNvbmN1cnJlbmN5IiA6IDIwCiAgICB9LAogICAgIlVDIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogMTAKICAgIH0sCiAgICAiUEFOMTIzIiA6IHsKICAgICAgImNodW5rX3NpemUiIDogMjU2LAogICAgICAiZW5hYmxlZCIgOiB0cnVlLAogICAgICAiY29uY3VycmVuY3kiIDogNAogICAgfQogIH0sCiAgInBsYXliYWNrU291cmNlS2luZCIgOiAic3BpZGVyX3BsdWdpbiIsCiAgImFwaSIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3IiwKICAicHJlaGVhdFVybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3BsdWdpbi1wcmVoZWF0L2JhaXBpYW9ndWFpIiwKICAicGxheWJhY2tTb3VyY2VOYW1lIiA6ICLlpLjniLYiLAogICJwbGF5YmFja0NvbmZpZ1VybCIgOiAiaHR0cHM6Ly95c25ldy43ODA0MjAueHl6OjE3Nzc3L3N1Yi9iYWlwaWFvZ3VhaS8yIgp9",
@@ -297,7 +500,963 @@
       "type": 3,
       "key": "9030edffa3034ccfab61f770d4c0c4636fc4",
       "searchable": 1,
-      "order": 150
+      "order": 240
+    },
+    {
+      "key": "豆瓣",
+      "name": "豆瓣┃推荐",
+      "type": 3,
+      "api": "csp_DouDouGuard",
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 250
+    },
+    {
+      "key": "MDrive",
+      "name": "我的云盘┃配置",
+      "type": 3,
+      "api": "csp_MyDriveGuard",
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "indexs": 0,
+      "style": {
+        "type": "oval"
+      },
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 260
+    },
+    {
+      "key": "荐片",
+      "name": "荐片┃P2P",
+      "type": 3,
+      "api": "csp_JPJGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 270
+    },
+    {
+      "key": "Local",
+      "name": "本地┃文件",
+      "type": 3,
+      "api": "csp_Local",
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "jar": "https://tv.菜妮丝.top/jar/fm0501.jar;md5;22f558deceb8273665c00c05d89c4c18",
+      "order": 280
+    },
+    {
+      "key": "玩偶",
+      "name": "玩偶哥哥┃4K弹幕",
+      "type": 3,
+      "api": "csp_WoGGGuard",
+      "timeout": 30,
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 290
+    },
+    {
+      "key": "seed",
+      "name": "聚剧剧┃四盘",
+      "type": 3,
+      "api": "csp_SeedhubGuard",
+      "ext": "5++kwLhNYm9UrO9wh7Dl7eKamTee4s/5",
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "indexs": 0,
+      "style": {
+        "type": "list"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 300
+    },
+    {
+      "key": "ZPan",
+      "name": "聚盘搜┃四盘",
+      "type": 3,
+      "api": "csp_S_zpsGuard",
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": {
+        "siteUrl": "https://ps.i3ei.com/"
+      },
+      "indexs": 0,
+      "style": {
+        "type": "list"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 310
+    },
+    {
+      "key": "抠搜",
+      "name": "抠抠┃搜搜",
+      "type": 3,
+      "api": "csp_KkSsGuard",
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 320
+    },
+    {
+      "key": "UC",
+      "name": "优汐┃搜搜",
+      "type": 3,
+      "api": "csp_UuSsGuard",
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 330
+    },
+    {
+      "key": "米搜",
+      "name": "米搜┃夸嘟",
+      "type": 3,
+      "api": "csp_MIPanSoGuard",
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 340
+    },
+    {
+      "key": "YpanSo",
+      "name": "盘她┃夸父",
+      "type": 3,
+      "api": "csp_YpanSoGuard",
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 350
+    },
+    {
+      "key": "BpanSo",
+      "name": "盘他┃嘟嘟",
+      "type": 3,
+      "api": "csp_BpanSoGuard",
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 360
+    },
+    {
+      "key": "立播",
+      "name": "立播┃秒播",
+      "type": 3,
+      "api": "csp_LibvioGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": {
+        "Cloud-drive": "tvfan/Cloud-drive.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 370
+    },
+    {
+      "key": "奶酪",
+      "name": "奶酪┃秒播",
+      "type": 3,
+      "api": "csp_T4Guard",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOIzPkSUkANv6AT2prC8en3+TzKx9TnlT8vaY37HhtYfAQe6C5xqrVuJPhQwYV6r3eRdMBGm3Qm6Th+BushR86B6KqJGXDsHazHw7alBG/7zUxkN1tK/NypRxnpBNoeUtpw4jcCGhytI75yO4g4zG6SOPA0RSwhksM0IF2friAkrHCWoW3v+0mdw6sjz4t4XB1Df7yL/R5cfaA/5LQYq3I8OkvMrJMU9Q1P7JXwx7NSF2zTyH/ANVmZ4u5m567DW1KVG7OuQjXPjZiOXTYk0+wjpfBRTf19yIq6q/C76k2Fs80joAMPw0ueDR+QHxtuDcTom2rmHkI1Fonkzi6BotbpUcbSi4PiIgmfdbvVwhG6Z+i4nvt+IYa48l5aLA7PLgDiERpuOs31aHaXlgFswT87XyTb8QaF4CuzKWJuXptwNTjvXAS9KHdxH49Ay+hfBAB2bCvUf4CMoldF2wZUv0mI2qY966erFpOFg+FOc7t88EUH8j8ACXQtHJiKC9RQ+SaLIF0=",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 380
+    },
+    {
+      "key": "厂长",
+      "name": "厂长┃秒播",
+      "type": 3,
+      "api": "csp_NewCzGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 390
+    },
+    {
+      "key": "文采",
+      "name": "文采┃秒播",
+      "type": 3,
+      "api": "csp_JpysGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 400
+    },
+    {
+      "key": "原创",
+      "name": "原创┃秒播",
+      "type": 3,
+      "api": "csp_YCyzGuard",
+      "timeout": 15,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 410
+    },
+    {
+      "key": "比特",
+      "name": "比特┃秒播",
+      "type": 3,
+      "api": "csp_BttwooGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 420
+    },
+    {
+      "key": "糯米",
+      "name": "糯米┃多线",
+      "type": 3,
+      "api": "csp_NmyswvGuard",
+      "timeout": 15,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 430
+    },
+    {
+      "key": "热播",
+      "name": "热播┃多线",
+      "type": 3,
+      "api": "csp_AppTTGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "uqGL1bNENExT7/hGxpSE5qU=",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 440
+    },
+    {
+      "key": "剧圈",
+      "name": "剧圈┃多线",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOX1voDIQhH8epBwpmIsuSluiuZl4+/lm1iJsy3HwNWMxpf9CY77fshI+kByoxy7DyPatUZ1jk0ty1p",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 450
+    },
+    {
+      "key": "视界",
+      "name": "视界┃多线",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOX1voDIQhH8epBwpmIsuSjpyyamoq83jM9L4r3AlwEM1kc4mV87aNKLeF/iNNL7ne1LNZlk3Bz8A==",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 460
+    },
+    {
+      "key": "花花",
+      "name": "花花┃多线",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOb1uAWbkRHp7hdxprG9un3+TbEn4q2l2kibom2DB9cJ0IB72Vu7apib64Gl9Ew6WDTJcIVzWsluDxqEaBqWIyM77GBXCPqCPmCyOr3RGfwjlsjchkArMHzTFT1VY9QUooz8m8BXA2mSa/whkG7SpZP100qUm6hMmTjm8YQQ51m6mxEE7hhEK1eNQ==",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 470
+    },
+    {
+      "key": "播客",
+      "name": "播客┃多线",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOb1uAWbkRHp7hdxprG9un3+SPC3Nbv1SI/b5LtAUhbYkFU/DFvsLBvd/oV3cA4uGiCZNFRz3ln6nh5Q+AgDZiM5KrCAiO7S7SVzv31EG78jVB4JEMNrMPzTgWqRZdMTdR1smBWWwru",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 480
+    },
+    {
+      "key": "爱影",
+      "name": "爱影┃多线",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOb1uAWbkRHp7hdxprG9un3+TbK3c790iI/b5LtEhxNfAQK7DRvrLcqbf1Q0MQntXLZfMhK0Xsn6nwmF+shR8eZ76qXW3y9XKbblunmCSPux0YtJlscp9zpDmW7Ju4ufOtv+BcyBX7VWrSzyUWoVcxGhUtv",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 490
+    },
+    {
+      "key": "猫猫",
+      "name": "猫猫┃多线",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOb1uAWbkRHp7hdxprG9un3+TDC2t/rlTwlcMr+ChdbeV8Q9y9xsKxqfbtO0M05tGWcacFVm2c45jhyH6t1Rt6A6PjICGqxV+uN1uOqS2/x0Vp5J0Vfo8usQADpHg==",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 500
+    },
+    {
+      "key": "奥特",
+      "name": "奥特┃多线",
+      "type": 3,
+      "api": "csp_AueteGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 510
+    },
+    {
+      "key": "新6V",
+      "name": "新6V┃磁力",
+      "type": 3,
+      "api": "csp_SixVGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 0,
+      "quickSearch": 1,
+      "ext": "https://www.xb6v.com/",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 520
+    },
+    {
+      "key": "咕咕",
+      "name": "咕咕┃动漫",
+      "type": 3,
+      "api": "csp_AppSxGuard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "rfOX1voDIQhH8epBwpmIsuS/sSCZxc/l0mxkeoroQVYOelMAvX1kuYptSLB36YxEjVawS9p37Cgo",
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 530
+    },
+    {
+      "key": "Dm84",
+      "name": "巴士┃动漫",
+      "type": 3,
+      "api": "csp_Dm84Guard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 540
+    },
+    {
+      "key": "Anime1",
+      "name": "日本┃动漫",
+      "type": 3,
+      "api": "csp_Anime1Guard",
+      "timeout": 10,
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 550
+    },
+    {
+      "key": "Aid",
+      "name": "🚑急救┃教学",
+      "type": 3,
+      "api": "csp_FirstAidGuard",
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "style": {
+        "type": "rect",
+        "ratio": 3.8
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 560
+    },
+    {
+      "key": "少儿教育",
+      "name": "📚少儿┃教育",
+      "type": 3,
+      "api": "csp_BiliGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "ext": {
+        "json": "https://nos.netease.com/ysf/89370c8ddf36b5e1beb4d71adb921bda.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 570
+    },
+    {
+      "key": "小学课堂",
+      "name": "📚小学┃课堂",
+      "type": 3,
+      "api": "csp_BiliGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "ext": {
+        "json": "https://nos.netease.com/ysf/d7a21cf34ede56f5c686ecfba5fc7e3f.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 580
+    },
+    {
+      "key": "初中课堂",
+      "name": "📚初中┃课堂",
+      "type": 3,
+      "api": "csp_BiliGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "ext": {
+        "json": "https://nos.netease.com/ysf/8f55d520f8d70056695740ef151744a7.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 590
+    },
+    {
+      "key": "高中教育",
+      "name": "📚高中┃课堂",
+      "type": 3,
+      "api": "csp_BiliGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 0,
+      "changeable": 0,
+      "quickSearch": 0,
+      "ext": {
+        "json": "https://nos.netease.com/ysf/c66a4b5356141c49fd45ec51568017b4.txt"
+      },
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 600
+    },
+    {
+      "key": "潮流",
+      "name": "潮流┃APP",
+      "type": 3,
+      "api": "csp_AppRJ",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "http://v.rbotv.cn",
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 610
+    },
+    {
+      "key": "行动",
+      "name": "行动┃APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "http://165.99.42.137:5432|1234567890987654",
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 620
+    },
+    {
+      "key": "一碗",
+      "name": "一碗┃APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "https://vv.229d.cn|8888888888888888",
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 630
+    },
+    {
+      "key": "猫抓",
+      "name": "猫抓┃APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "https://app.95112475.xyz|5a9w6x58dsq6z3a6",
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 640
+    },
+    {
+      "key": "蔬菜",
+      "name": "蔬菜┃APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "https://gitee.com/wmmoliill/wimg/raw/master/img/bk/9.txt|88689667dce61725",
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 650
+    },
+    {
+      "key": "永永",
+      "name": "永永┃APP",
+      "type": 3,
+      "api": "csp_AppGet",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "https://bind.315999.xyz/89.txt|#getapp@TMD@2025|120",
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 660
+    },
+    {
+      "key": "3Q",
+      "name": "3Q┃APP",
+      "type": 3,
+      "api": "csp_App3Q",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 670
+    },
+    {
+      "key": "csp_Jpys",
+      "name": "金牌┃影视",
+      "type": 3,
+      "api": "csp_Jpys",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 680
+    },
+    {
+      "key": "csp_SaoHuo",
+      "name": "火火┃影视",
+      "type": 3,
+      "api": "csp_SaoHuo",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "ext": "https://shdy5.us",
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 690
+    },
+    {
+      "key": "csp_Gz360",
+      "name": "瓜子┃影视",
+      "type": 3,
+      "api": "csp_Gz360",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 700
+    },
+    {
+      "key": "csp_AppXY",
+      "name": "星牙┃短剧",
+      "type": 3,
+      "api": "https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/XYDJ.py",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 710
+    },
+    {
+      "key": "📺┃︎剧王┃短剧",
+      "name": "剧王┃短剧",
+      "type": 3,
+      "api": "https://git.yylx.win/raw.githubusercontent.com/PizazzGY/NewTVBox/main/movie/py/JWDJ.py",
+      "searchable": 1,
+      "changeable": 1,
+      "quickSearch": 1,
+      "jar": "https://tv.菜妮丝.top/jar/feimao0528.jar;md5;b81a5747f91e7169bdc7e3f68bd995e0",
+      "order": 720
+    },
+    {
+      "key": "360影视",
+      "name": "360┃解析",
+      "type": 3,
+      "api": "csp_SP360",
+      "searchable": 1,
+      "changeable": 1,
+      "jar": "https://tv.菜妮丝.top/jar/xyq0728.jar;md5;ab7a2bf5947c745657f25c80b337224b",
+      "order": 730
+    },
+    {
+      "key": "非凡",
+      "name": "非凡┃影视",
+      "type": 1,
+      "api": "http://cj.ffzyapi.com/api.php/provide/vod",
+      "searchable": 1,
+      "changeable": 1,
+      "order": 740
+    },
+    {
+      "key": "公告",
+      "name": "——————————",
+      "type": 3,
+      "api": "csp_XPath",
+      "searchable": 0,
+      "changeable": 0,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 750
+    },
+    {
+      "key": "说明1",
+      "name": "https://菜妮丝.top",
+      "type": 3,
+      "api": "csp_XPath",
+      "searchable": 0,
+      "changeable": 0,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 760
+    },
+    {
+      "key": "说明2",
+      "name": "免费接口更新维护",
+      "type": 3,
+      "api": "csp_XPath",
+      "searchable": 0,
+      "changeable": 0,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 770
+    },
+    {
+      "key": "说明3",
+      "name": "请勿相信视频中任何广告",
+      "type": 3,
+      "api": "csp_XPath",
+      "searchable": 0,
+      "changeable": 0,
+      "jar": "https://tv.菜妮丝.top/jar/fty0903.jar;md5;608d621640f5ed5ae8c78158ca61bff7",
+      "order": 780
+    },
+    {
+      "key": "点我切源",
+      "name": "豆瓣荐片",
+      "type": 3,
+      "api": "csp_DouDouGuard",
+      "indexs": 1,
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 790
+    },
+    {
+      "key": "YGP",
+      "name": "🚀叨观荐影┃预告片",
+      "type": 3,
+      "api": "csp_YGPGuard",
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 800
+    },
+    {
+      "key": "MTV1",
+      "name": "🎙️易听音乐┃带歌词",
+      "type": 3,
+      "api": "csp_MusicGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1
+      },
+      "playerType": 2,
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 810
+    },
+    {
+      "key": "光影",
+      "name": "🌞光影┃不卡",
+      "type": 3,
+      "api": "csp_T4Guard",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 0,
+      "ext": "rfOIzPkSUkANv6AT2prC8en3+Trbx4j10CIoZMv3Ag4bdEYQqTMqu/Z3YPtC2NJv6n6YeZdgyWlo4WJjBL5gUt6B7LvCEDT4CLrWka31GRq7jwVkfQRB/Jy9HkG7E8xUBIJi5DdVFk3qAuGnwUWqQNRblRxzHW+tdSm6zoFcG/QkZ97bzWOXn0fzbgwjBDkBHgcPIYjlULlctCNKgJ9DzGNSl+zMZDZgmxczsZeeahRS38Cst3qvaHn1T2lmLBGVGXPaRovi77LPRRDOJSNRrdpvCHdRikYwgar0MU56hXMGeGBiKp/OmGTIYR8dFRGvZ/m8xGOqs8U13h6wvADOGlYoP9VaQBqTcDnz9Q0Urhw3oFXWyvIlUrDhX9la5L2NYzagbyk3afqhxeSXXp07nAFsNy2CojHRTbmz4eohLoIJTSi2DzPpheVx1DAapfgRdTc7Ax5ddYpN338GiDAa0GnEgLe04a1pZ5jF+/Q7HJswqlSO+DXCQ3FjRbb/ZPQcozcCWwzhUHE1QUAt799V9DPMuiHGyudIcZarGQmezB+Lb45RdHIRy0PXD+NRVPJlfDFD5FMGSqsiVklibvuwlVHT8J5vHgh/1nEZoI1RlYYLrkjTts2EeQmrpB/sgLyo1vnjFw==",
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 820
+    },
+    {
+      "key": "瓜子",
+      "name": "👀瓜子┃不卡",
+      "type": 3,
+      "api": "csp_AppgzGuard",
+      "timeout": 15,
+      "playerType": "2",
+      "searchable": 1,
+      "quickSearch": 1,
+      "changeable": 1,
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 830
+    },
+    {
+      "key": "看球",
+      "name": "⚽八八┃看球",
+      "type": 3,
+      "api": "csp_KanqiuGuard",
+      "timeout": 10,
+      "searchable": 0,
+      "changeable": 0,
+      "style": {
+        "type": "list"
+      },
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 840
+    },
+    {
+      "key": "多多",
+      "name": "🏀多多┃看球",
+      "type": 3,
+      "api": "csp_DoubaoGuard",
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "style": {
+        "type": "list"
+      },
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 850
+    },
+    {
+      "key": "吃瓜",
+      "name": "🏐吃瓜┃看球",
+      "type": 3,
+      "api": "csp_LiveGzGuard",
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "style": {
+        "type": "list"
+      },
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 860
+    },
+    {
+      "key": "alllive",
+      "name": "🎮一直播┃直播",
+      "type": 3,
+      "api": "csp_AllliveGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "timeout": 15,
+      "playerType": "2",
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "ext": "uqGL1fpJNAUN8ORQgIPD+b6l+CzC2t8=",
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 870
+    },
+    {
+      "key": "MTV",
+      "name": "🎶明星┃MV",
+      "type": 3,
+      "api": "csp_BiliGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "ext": {
+        "json": "https://nos.netease.com/ysf/5af5fbe12a88b7c45aa1c21e6551826c.txt"
+      },
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 880
+    },
+    {
+      "key": "有声小说",
+      "name": "🎧有声┃小说",
+      "type": 3,
+      "api": "csp_Tingshu275Guard",
+      "style": {
+        "type": "rect",
+        "ratio": 1
+      },
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 890
+    },
+    {
+      "key": "虎牙js",
+      "name": "🐯虎牙┃直播",
+      "type": 3,
+      "api": "https://git.yylx.win/https://raw.githubusercontent.com/fantaiying7/EXT/refs/heads/main/drpy2.min.js",
+      "ext": "https://git.yylx.win/https://raw.githubusercontent.com/fantaiying7/EXT/refs/heads/main/虎牙.js",
+      "style": {
+        "type": "rect",
+        "ratio": 1.755
+      },
+      "timeout": 10,
+      "playerType": "2",
+      "searchable": 1,
+      "quickSearch": 0,
+      "changeable": 0,
+      "order": 900
+    },
+    {
+      "key": "斗鱼js",
+      "name": "🐟斗鱼┃直播",
+      "type": 3,
+      "api": "https://git.yylx.win/https://raw.githubusercontent.com/fantaiying7/EXT/refs/heads/main/drpy2.min.js",
+      "ext": "https://git.yylx.win/https://raw.githubusercontent.com/fantaiying7/EXT/refs/heads/main/斗鱼直播.js",
+      "style": {
+        "type": "rect",
+        "ratio": 1.755
+      },
+      "timeout": 10,
+      "playerType": "2",
+      "searchable": 1,
+      "quickSearch": 0,
+      "changeable": 0,
+      "order": 910
+    },
+    {
+      "key": "JPan",
+      "name": "🦋易搜┃四盘",
+      "type": 3,
+      "api": "csp_S_zpsGuard",
+      "searchable": 1,
+      "quickSearch": 0,
+      "changeable": 0,
+      "ext": {
+        "siteUrl": "https://so.252035.xyz/"
+      },
+      "indexs": 0,
+      "style": {
+        "type": "list"
+      },
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 920
+    },
+    {
+      "key": "Bili",
+      "name": "🅱哔哔合集┃弹幕",
+      "type": 3,
+      "api": "csp_BiliGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 1,
+      "quickSearch": 0,
+      "changeable": 0,
+      "ext": {
+        "json": "https://nos.netease.com/ysf/0075389dca9afadd4614e9713765ff17.txt"
+      },
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 930
+    },
+    {
+      "key": "Biliych",
+      "name": "🅱哔哔演唱会┃弹幕",
+      "type": 3,
+      "api": "csp_BiliGuard",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "ext": {
+        "json": "https://nos.netease.com/ysf/6496356286589c68f52c2f99c0c674c7.txt"
+      },
+      "jar": "https://zl.wpscdn.cn/2026/08/03/space_img/31c67f10-796e-4c4b-abe7-75fd4a527cc8.jpg;md5;9d90c83bc7504392dd02c2236f08713a",
+      "order": 940
+    },
+    {
+      "key": "dr_兔小贝",
+      "name": "📚儿童┃启蒙",
+      "type": 3,
+      "api": "https://git.yylx.win/https://raw.githubusercontent.com/fantaiying7/EXT/refs/heads/main/drpy2.min.js",
+      "ext": "https://git.yylx.win/https://raw.githubusercontent.com/fantaiying7/EXT/refs/heads/main/%E5%85%94%E5%B0%8F%E8%B4%9D.js",
+      "style": {
+        "type": "rect",
+        "ratio": 1.597
+      },
+      "searchable": 0,
+      "quickSearch": 0,
+      "changeable": 0,
+      "order": 950
     }
   ]
 }
